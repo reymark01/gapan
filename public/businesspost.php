@@ -17,13 +17,13 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					echo '<div class="container">
 						<div class="row justify-content-center">
 							<div class="col-sm-8 offset-sm-2">
-								<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
+								<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
 									<b>'.$row['b_name'].'</b></a><br>
 										<small><b>'.Validate::formatDate($row['b_postdate']).'</b></small><br><br>
 										<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {
-							echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/business_photos/'.$photos['b_postphoto'].'"></div>';
+							echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/business_photos/'.$photos[0]['b_postphoto'].'"></div>';
 						} else {
 							echo '<div class="row">';
 							foreach ($photos as $photo) {

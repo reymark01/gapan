@@ -102,7 +102,7 @@
 						<li class="nav-item dropdown">
 							<a href="#" class="nav-link dropdown-toggle" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="width: 40px; height: 40px;" class="rounded-circle" src="/user_profiles/<?=Session::get('u_sess_profile')?>"></a>
 							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-								<a href="/user_profiles/<?=Session::get('u_sess_username')?>" class="dropdown-item"><b><?=Session::get('u_sess_fname').' '.Session::get('u_sess_lname')?></b></a><hr>
+								<a href="/user/<?=Session::get('u_sess_username')?>" class="dropdown-item"><b><?=Session::get('u_sess_fname').' '.Session::get('u_sess_lname')?></b></a><hr>
 								<?php
 								while ($row = $result->fetch()) {
 									?>

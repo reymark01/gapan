@@ -2,7 +2,7 @@
 require_once '../../app/core/newinit.php';
 if (Input::exist()) {
 	if (Input::get('type') == 'business' && Input::get('tab') == 'business') {
-		$sql = "SELECT stores.b_name, stores.b_profile, stores.b_username, store_post.id, store_post.b_title, store_post.b_post, store_post.b_postprice, store_post.b_postdate FROM stores, store_post WHERE stores.id = store_post.store_id ORDER BY store_post.id DESC LIMIT :start, :lim";
+		$sql = "SELECT stores.b_name, stores.b_profile, stores.b_username, store_post.id, store_post.b_title, store_post.b_post, store_post.b_postprice, store_post.b_postdate FROM stores, store_post WHERE stores.id = store_post.store_id AND store_post.b_postverified = 1 ORDER BY store_post.id DESC LIMIT :start, :lim";
 		$result = DB::query($sql, [], true, ['start' => Input::get('start'), 'lim' => Input::get('limit')]);
 		echo '<div class="container">';
 			while($row = $result->fetch()) {

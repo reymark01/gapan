@@ -62,7 +62,7 @@ class Validate {
 									$this->addError([$item => 'is Invalid']);
 								}
 							} elseif ($rulevalue == 'e') {
-								if (!preg_match("/^[0-9]*$/", $value)) {
+								if (!preg_match("/^[0-9 ,.]*$/", $value)) {
 									$this->addError([$item => 'is invalid']);
 								}
 							} elseif ($rulevalue == 'f') {

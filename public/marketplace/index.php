@@ -141,5 +141,5 @@ $(document).ready(function() {
 	});
 });
 </script>
-</body>
-</html>
+<?php
+require_once '../layout/footer.php';

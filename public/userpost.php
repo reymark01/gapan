@@ -19,7 +19,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					<div class="row">
 					<div class="col-sm-2"></div>
 					<div class="col-sm-8">
-					<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
+					<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/user/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
 					<b>'.$row['fname'].' '.$row['lname'].'</b></a><br>
 					<small><b>'.Validate::formatDate($row['u_postdate']).'</b></small><br><br>
 					<b><h3>'.$row['u_title'].'</h3></b><br>
@@ -27,7 +27,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {
-							echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/user_photos/'.$photos['u_postphoto'].'"></div>';
+							echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/user_photos/'.$photos[0]['u_postphoto'].'"></div>';
 						} else {
 							echo '<div class="row">';
 							foreach ($photos as $photo) {
