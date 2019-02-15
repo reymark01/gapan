@@ -1,0 +1,15 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [NC]
+RewriteRule ^news/([0-9]+) article.php?id=$1
+RewriteRule ^admin/news-post/edit/([0-9]+) admin/edit-news-post.php?nid=$1 [NC]
+RewriteRule ^admin/events-post/edit/([0-9]+) admin/edit-events-post.php?eid=$1 [NC]
+RewriteRule ^admin/announcements/edit/([0-9]+) admin/edit-announcements-post.php?gpid=$1 [NC]
+RewriteRule ^event/([0-9]+) event.php?id=$1
+RewriteRule ^user/([0-9a-zA-Z_-]+)/([a-zA-Z]+)/([0-9]+) userpost.php?username=$1&tab=$2&pid=$3 [NC]
+RewriteRule ^user/([0-9a-zA-Z_-]+) user.php?username=$1 [NC]	
+RewriteRule ^business/([0-9a-zA-Z_-]+)/([a-zA-Z]+)/([0-9]+) businesspost.php?username=$1&tab=$2&pid=$3 [NC]
+RewriteRule ^business/([0-9a-zA-Z_-]+)/([a-zA-Z]+) businessitems.php?username=$1&tab=$2 [NC]
+RewriteRule ^business/([0-9a-zA-Z_-]+) business.php?username=$1 [NC,L]

@@ -1,0 +1,152 @@
+<?php
+require_once '../../app/core/newinit.php';
+
+if (!Session::exist('admin_sess_id')) {
+  Redirect::to('../');
+}
+
+if (Input::exist()) {
+  if (!empty(Input::get('accept'))) {
+    $sql = "UPDATE user_post SET u_postdate = NOW(), u_postverified = 1 WHERE id = :id";
+    DB::query($sql, [], true, ['id' => Input::get('id')]);
+  } elseif (!empty(Input::get('reject'))) {
+    $sql = "DELETE FROM user_post WHERE id = :id";
+    DB::query($sql, [], true, ['id' => Input::get('id')]);
+  }
+}
+?>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bootstrap Dashboard by Bootstrapious.com</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="css/fontastic.css">
+    <!-- Google fonts - Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <!-- jQuery Circle-->
+    <link rel="stylesheet" href="css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <!-- Custom Scrollbar-->
+    <link rel="stylesheet" href="vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+  </head>
+  <body>
+    <!-- Side Navbar -->
+    <nav class="side-navbar">
+      <div class="side-navbar-wrapper">
+        <!-- Sidebar Header    -->
+        <div class="sidenav-header d-flex align-items-center justify-content-center">
+          <!-- User Info-->
+          <div class="sidenav-header-inner text-center"><img src="img/avatar-7.jpg" alt="person" class="img-fluid rounded-circle">
+            <h2 class="h5">Admin 1</h2><span>Admin Dashboard</span>
+          </div>
+          <!-- Small Brand information, appears on minimized sidebar-->
+          <div class="sidenav-header-logo"><a href="index.html" class="brand-small text-center"> <strong>A</strong><strong class="text-primary">D</strong></a></div>
+        </div>
+        <!-- Sidebar Navigation Menus-->
+        <div class="main-menu">
+          <h5 class="sidenav-heading">Main</h5>
+          <ul id="side-main-menu" class="side-menu list-unstyled">
+            <li><a href="dashboard">Notifications</a></li>
+            <li><a href="news-post">News Post</a>            </li>
+            <li><a href="events-post">Events Post</a>            </li>
+            <li><a href="#">Announcements</a>            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="page">
+      <!-- navbar-->
+      <header class="header">
+        <nav class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-holder d-flex align-items-center justify-content-between">
+              <div class="navbar-header"><a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"> </i></a><a href="index.html" class="navbar-brand">
+                  <div class="brand-text d-none d-md-inline-block"><span>Bootstrap </span><strong class="text-primary">Dashboard</strong></div></a></div>
+              <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                
+               
+                <!-- Log out-->
+                <li class="nav-item"><form action="../logout" method="post" class="nav-link logout"> <button type="submit" name="logout" class="d-none d-sm-inline-block">Logout</button><i class="fa fa-sign-out"></i></form></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <!-- Counts Section -->
+      <div class="container-fluid">
+          <div class="row">
+<?php
+	/*$count = DB::query("SELECT count(*) FROM userpost WHERE post_verified = 0")->fetch();
+	if ($count['count(*)'] >= 1) {
+
+	}*/
+$results =  DB::query("SELECT * FROM user_post WHERE u_postverified = 0");
+  while ($row = $results->fetch()) {
+	  $sql = "SELECT fname, lname, username, profile FROM users WHERE id = :id";
+	  $result = DB::query($sql, [], true, ['id' => $row['user_id']])->fetch();
+    $sql2 = "SELECT * FROM user_post_photos WHERE user_post_id = :postid";
+    $result2 = DB::query($sql2, [], true, ['postid' => $row['id']]);
+    $photos = [];
+    while ($row2 = $result2->fetch()) {
+      array_push($photos, $row2);
+    }
+  ?>
+
+<div class="col-sm-4 p-0">
+  <div class="card" style="margin: 15px; min-height: 375px; ">
+  <div class="card-body">
+    <form action="" method="post">
+      <input type="hidden" name="id" value="<?=$row['id']?>">
+      <a href="/user/<?=$result['username']?>"><img class="imgsmall" src="/user_profiles/<?=$result['profile']?>"><b><?=$result['fname'].' '.$result['lname'];?></b></a>
+      <br>
+      <small class="text-muted"><?=Validate::formatDate($row['u_postdate'])?></small>
+      <br>
+      <br>
+      <?=$row['u_post']?><br>
+      <?php if (empty($photos)) {	 
+      echo 'No Image<br>';
+      } else {
+        echo '<div class="row">';
+        foreach($photos as $photo) {
+          echo '<img class="img-thumbnail" src="/user_photos/'.$photo['u_postphoto'].'" style="width: 160px; height: 160px;">';
+        }
+        echo '</div>';
+      }
+      ?>
+    </div>
+    <div class="card-footer">
+      <div class="float-right">
+        <button type="submit" class="btn btn-primary" name="accept" value="accept">Accept</button>
+        <button type="submit" class="btn btn-danger" name="reject" value="reject">Reject</button>
+    </div>
+    </form>
+      </div>
+    </div>
+</div>
+
+<?php
+}
+?>
+
+</div>
+</div>
+</body>
+</html>
