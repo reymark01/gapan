@@ -69,7 +69,7 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 			    $mail->setFrom('gapanwebsitetest@gmail.com', 'Gapan Website E-mail Verification');
 			    $mail->Subject = 'Gapan Website E-mail Verification';
 			    $mail->Body    = 'Verify E-mail to complete your account application<br>
-			    Click this <a href=178.128.99.52/emailconfirm.php?email='.Input::get('email').'&token='.$etoken.'&username='.Input::get('username').'>link</a>';
+			    Click this <a href=gapancity.ml/emailconfirm.php?email='.Input::get('email').'&token='.$etoken.'&username='.Input::get('username').'>link</a>';
 			    $mail->addAddress(Input::get('email'));
 			    if ($mail->send()) {
 			    	if (!empty($_FILES['file']['name'])) {
