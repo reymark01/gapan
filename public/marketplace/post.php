@@ -32,7 +32,7 @@ if (Input::exist()) {
 					}
 				}
 				$sql = "INSERT INTO user_post (user_id, u_title, u_post, u_postprice) VALUES (:user_id, :title, :post, :postprice)";
-				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'post' => htmlspecialchars(Input::get('post'))], true, ['user_id' => Session::get('u_sess_id'), 'postprice' => Input::get('price')])) {
+				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['user_id' => Session::get('u_sess_id')])) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM user_post WHERE user_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('u_sess_id'), 'lim' => 1])->fetch();
@@ -76,7 +76,7 @@ if (Input::exist()) {
 					}
 				}
 				$sql = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice) VALUES (:id, :title, :post, :postprice)";
-				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'post' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id'), 'postprice' => Input::get('price')])) {
+				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id')])) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();

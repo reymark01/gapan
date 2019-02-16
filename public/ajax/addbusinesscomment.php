@@ -10,7 +10,7 @@ if (Input::exist()) {
 				$row = DB::query($newcomment, [], true, ['postid' => Input::get('postid'), 'uid' => Session::get('u_sess_id'), 'newlim' => 1])->fetch();
 				$out = '';
 				$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
-				$out .= '<a href="../user/'.$row['username'].'"><img src="user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
+				$out .= '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
 				$out .= '<br><small>'.Validate::formatDate($row['b_commentdate']).'</small>
 				 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_comment'])).'</div>
 				  <input type="hidden" class="ucommentid" value="'.$row['id'].'">
@@ -27,7 +27,7 @@ if (Input::exist()) {
 				$row = DB::query($newcomment, [], true, ['postid' => Input::get('postid'), 'bid' => Session::get('b_sess_id'), 'newlim' => 1])->fetch();
 				$out = '';
 				$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
-				$out .= '<a href="../business/'.$row['b_username'].'"><img src="business_profiles/'.$row['b_profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['b_name'].'</b></a>';
+				$out .= '<a href="/business/'.$row['b_username'].'"><img src="/business_profiles/'.$row['b_profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['b_name'].'</b></a>';
 				$out .= '<br><small>'.Validate::formatDate($row['b_commentdate']).'</small>
 				 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_comment'])).'</div>
 				  <input type="hidden" class="ucommentid" value="'.$row['id'].'">
