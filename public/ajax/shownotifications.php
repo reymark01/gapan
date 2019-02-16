@@ -10,11 +10,11 @@ if (Input::exist() && !empty(Input::get('postgetnotifications'))) {
 			$output .= '<div class="container">';
 			if ($row['notif_from'] == 'admin') {
 				if ($row['link'] == 'event') {
-					$output .= '<a href="/event/'.$row['link_id'].'"><li class="dropdown-item">Gapan City posted an event<br>';	
+					$output .= '<a href="/event/'.$row['link_id'].'"><li class="dropdown-item"><img src="/image/seal.png" class="imgsmall">Gapan City posted an event<br>';	
 				} elseif ($row['link'] == 'news') {
-					$output .= '<a href="/news/'.$row['link_id'].'"><li class="dropdown-item">Gapan City posted a news<br>';
+					$output .= '<a href="/news/'.$row['link_id'].'"><li class="dropdown-item"><img src="/image/seal.png" class="imgsmall">Gapan City posted a news<br>';
 				} elseif ($row['link'] == 'GapanCity') {
-					$output .= '<a href="/GapanCity"><li class="dropdown-item">Gapan City posted an announcement<br>';
+					$output .= '<a href="/GapanCity"><li class="dropdown-item"><img src="/image/seal.png" class="imgsmall">Gapan City posted an announcement<br>';
 				}
 			} elseif ($row['notif_from'] == 'user') {
 				$res = DB::query("SELECT fname, lname, profile FROM users WHERE id = :uid", [], true, ['uid' => $row['from_id']])->fetch();

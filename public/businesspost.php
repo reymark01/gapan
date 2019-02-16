@@ -19,7 +19,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 							<div class="col-sm-8 offset-sm-2">
 								<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
 									<b>'.$row['b_name'].'</b></a><br>
-										<small><b>'.Validate::formatDate($row['b_postdate']).'</b></small><br><br>
+										<small class="text-muted"><b>'.Validate::formatDate($row['b_postdate']).'</b></small><br><br>
 										<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {

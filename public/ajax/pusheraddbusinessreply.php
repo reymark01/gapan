@@ -21,7 +21,7 @@ if (Input::exist()) {
 			$out = '';
 			$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 			$out .= '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
-			$out .= '<br><small>'.Validate::formatDate($row['b_replydate']).'</small>
+			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['b_replydate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_reply'])).'</div></div>';
 			$pusher->trigger('addBusinessReplyChannel', 'addBusinessReplyEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'cid' => $row['cid']));
 			$sql2 = "INSERT INTO store_notification (store_id, b_notif_from, b_from_id, b_notif_type, b_link, b_link_id) VALUES (:store_id, :b_notif_from, :b_from_id, :b_notif_type, :b_link, :b_link_id)";

@@ -21,7 +21,7 @@ if (Input::exist()) {
 				$out = '';
 				$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 				$out .= '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
-				$out .= '<br><small>'.Validate::formatDate($row['u_commentdate']).'</small>
+				$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_commentdate']).'</small>
 				 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div></div>';
 				$pusher->trigger('addUserCommentChannel', 'addUserCommentEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'postid' => $row['pid']));
 				if (Session::get('u_sess_id') != $userid['id']) {
@@ -36,7 +36,7 @@ if (Input::exist()) {
 			$out = '';
 			$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 			$out .= '<a href="/business/'.$row['b_username'].'"><img src="/business_profiles/'.$row['b_profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['b_name'].'</b></a>';
-			$out .= '<br><small>'.Validate::formatDate($row['u_commentdate']).'</small>
+			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_commentdate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div></div>';
 			$pusher->trigger('addUserCommentChannel', 'addUserCommentEvent', array('output' => $out, 'bid' => Session::get('b_sess_id'), 'postid' => $row['pid']));
 			$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :link_id)";

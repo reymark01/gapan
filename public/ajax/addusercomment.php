@@ -10,7 +10,7 @@ if (!empty(Input::get('postcomment'))) {
 			$out = '';
 			$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 			$out .= '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
-			$out .= '<br><small>'.Validate::formatDate($row['u_commentdate']).'</small>
+			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_commentdate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div>
 			 <input type="hidden" class="ucommentid" value="'.$row['id'].'">
 			 <input type="hidden" class="ur_count" value="">
@@ -27,7 +27,7 @@ if (!empty(Input::get('postcomment'))) {
 			$out = '';
 			$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 			$out .= '<a href="/business/'.$row['b_username'].'"><img src="/business_profiles/'.$row['b_profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['b_name'].'</b></a>';
-			$out .= '<br><small>'.Validate::formatDate($row['u_commentdate']).'</small>
+			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_commentdate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div>
 			  <input type="hidden" class="ucommentid" value="'.$row['id'].'">
 			 <input type="hidden" class="ur_count" value="">

@@ -21,7 +21,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					<div class="col-sm-8">
 					<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/user/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
 					<b>'.$row['fname'].' '.$row['lname'].'</b></a><br>
-					<small><b>'.Validate::formatDate($row['u_postdate']).'</b></small><br><br>
+					<small class="text-muted"><b>'.Validate::formatDate($row['u_postdate']).'</b></small><br><br>
 					<b><h3>'.$row['u_title'].'</h3></b><br>
 					<div>₱'.$row['u_postprice'].'.00</div><br>
 					<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_post'])).'</div>';

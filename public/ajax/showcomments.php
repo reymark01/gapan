@@ -33,7 +33,7 @@ if (Input::exist()) {
 				} elseif (!empty($row['username'])) {
 					echo '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
 				}
-				 echo '<br><small>'.Validate::formatDate($row['b_commentdate']).'</small>
+				 echo '<br><small class="text-muted">'.Validate::formatDate($row['b_commentdate']).'</small>
 				 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_comment'])).'<hr></div>
 				<input type="hidden" class="commentid" value="'.$row['id'].'">
 				<input type="hidden" class="r_count" value="">

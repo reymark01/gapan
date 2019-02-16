@@ -21,7 +21,7 @@ if (Input::exist()) {
 			$out = '';
 			$out .= '<div class="container border border-dark p-3 rounded" style="margin: 5px;">';
 			$out .= '<a href="/user/'.$row['username'].'"><img src="/user_profiles/'.$row['profile'].'" class="imgsmall border border-dark rounded-circle"><b>'.$row['fname'].' '.$row['lname'].'</b></a>';
-			$out .= '<br><small>'.Validate::formatDate($row['u_replydate']).'</small>
+			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_replydate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_reply'])).'</div></div>';
 			$pusher->trigger('addUserReplyChannel', 'addUserReplyEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'cid' => $row['cid']));
 			if (Session::get('u_sess_id') != $userid['id']) {
