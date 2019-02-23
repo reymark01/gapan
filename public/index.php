@@ -54,30 +54,52 @@ if (Session::exist('noUserReg')) {
 	</a>
 </div>
 <?php
+	echo '<br><br><div class="separator">Announcements</div><br><br>';
+	$sql2 = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT 3";
+	$result2 = DB::query($sql2);
+	echo '<div class="container"><div class="row">';
+	while ($row2 = $result2->fetch()) {
+		echo '<div class="col-md-4">
+					<a href="/GapanCity" class="custom">
+					<div class="card">';
+					if (!empty($row2['post_photo'])) {
+        				echo '<img class="card-img-top" src="/announce_photos/'.$row2['post_photo'].'">';
+    				} else {
+    					echo '<img class="card-img-top" src="/image/seal.png">';
+    				}
+						echo '<div class="card-body d-flex justify-content-center">
+							<b>'.Validate::formatDate($row2['post_date']).'</b>
+						</div>
+					</div>
+					</a>
+				</div>';
+	}
+	echo '</div></div>';
 	echo '<br><br><div class="separator">NEWS</div><br><br>';
 	$sql = "SELECT * FROM news ORDER BY id DESC LIMIT 1";
 	$result = DB::query($sql)->fetch();
-	echo '<a href="news/'.$result['id'].'" class="custom">
-		<div class="container">
-			<div class="row">
- 				<div class="card col-md-12 p-3">
-    				<div class="row ">
-    					<div class="col-md-4">
-        					<img class="w-100" src="/news_thumbnail/'.$result['news_thumbnail'].'">
-      					</div>
-      					<div class="col-md-8">
-        					<div class="card-block">
-          					<h6 class="card-title">'.$result['news_title'].'</h6>
-          					<p class="card-text"><small class="text-muted">'.Validate::formatDate($result['news_postdate']).'</small></p>
-        					<p class="card-text text-justify">'.$result['news_post'].'</p>
-        					</div>
-      					</div>
-    				</div>
-  				</div>
-  			</div>
-		</div>
-	</a><br><br><br><br>';
-
+	if (!empty($result)) {
+		echo '<a href="news/'.$result['id'].'" class="custom">
+			<div class="container">
+				<div class="row">
+	 				<div class="card col-md-12 p-3">
+	    				<div class="row ">
+	    					<div class="col-md-4">
+	        					<img class="w-100" src="/news_thumbnail/'.$result['news_thumbnail'].'">
+	      					</div>
+	      					<div class="col-md-8">
+	        					<div class="card-block">
+	          					<h6 class="card-title">'.$result['news_title'].'</h6>
+	          					<p class="card-text"><small class="text-muted">'.Validate::formatDate($result['news_postdate']).'</small></p>
+	        					<p class="card-text text-justify">'.$result['news_post'].'</p>
+	        					</div>
+	      					</div>
+	    				</div>
+	  				</div>
+	  			</div>
+			</div>
+		</a><br><br><br><br>';
+	}
 	echo '<div class="container-fluid">
 			<div class="row">';
 				$sql = "SELECT * FROM news ORDER BY id DESC LIMIT 1, 3";
@@ -103,7 +125,7 @@ if (Session::exist('noUserReg')) {
 	<br>
 	<br>
 	<br>		
-	<div class="separator">Announcements</div>
+	<div class="separator">EVENTS</div>
 	<br>
 	<br>';
 
@@ -133,7 +155,7 @@ if (Session::exist('noUserReg')) {
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
-<script src="js/main.js"></script>
+<script src="/js/main.js"></script>
 <script>
 $(document).ready(function() {
 	var u_sess_id = "<?php echo Session::exist('u_sess_id') ? Session::get('u_sess_id') : '' ?>";

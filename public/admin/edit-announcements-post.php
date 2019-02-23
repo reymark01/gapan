@@ -75,7 +75,7 @@ if (Input::exist()) {
             <li><a href="/admin/dashboard">Notifications</a></li>
             <li><a href="/admin/news-post">News Post</a>
             <li><a href="/admin/events-post">Events Post</a>
-            <li><a href="/GapanCity">Announcements</a>
+            <li><a href="/admin/announce-post">Announcements</a>
 
 
             </li>

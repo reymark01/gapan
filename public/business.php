@@ -2,35 +2,6 @@
 require_once 'pusher/vendor/autoload.php';
 require_once '../app/core/init.php';
 
-function renderImages($pid){
-	$sql = "SELECT * FROM store_post_photos WHERE store_post_id = :postid";
-	$result = DB::query($sql, [], true, ['postid' => $pid]);
-	$photos = [];
-	while ($row = $result->fetch()) {
-		array_push($photos, $row);
-	}
-	if (!empty($photos)) {
-		if (count($photos) == 1) {
-			echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/business_photos/'.$photos[0]['b_postphoto'].'"></div>';
-		} else {
-			echo '<div class="row">';
-			if (count($photos) > 4) {
-				for ($i=0;$i<4;$i++) {
-					echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/business_photos/'.$photos[$i]['b_postphoto'].'" style="width: 360px; height: 200px;"></div>';
-				}
-				echo '<div class="col-12 text-center">
-					<a href="/business/'.Input::get('username').'/post/'.$pid.'"> See More</a>
-				</div>';
-			} else {
-				foreach ($photos as $photo) {
-					echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/business_photos/'.$photo['b_postphoto'].'" style="width: 360px; height: 200px;"></div>';
-				}
-			}
-			echo '</div>';
-		}
-	}
-}
-
 if (Input::exist()) {
 	if (!empty(Input::get('addproduct'))) {
 		$validate = new Validate();
@@ -236,48 +207,15 @@ if (!empty(Input::get('username'))) {
 	$sql = "SELECT * FROM stores WHERE b_account_verified = 1 AND b_username = :username";
 	$result = DB::query($sql, ['username' => Input::get('username')])->fetch();
 	if (!empty($result)) {
-	// 	echo '<div class="container"><div class="row"><div class="col-sm-4">
-	// 		<img class="thumbnail_image" src="/business_profiles/'.$result['b_profile'].'"><br>'.$result['b_name'].'<br>'
-	// 		.$result['b_type'].'<br>'
-	// 		.$result['b_address'].'<br>'
-	// 		.$result['b_type'].'<br>'
-	// 		.$result['b_contact'].'<br>'
-	// 		.$result['b_email'].'<br></div></div></div>';
-	// 		if (Session::exist('b_sess_id') && Session::get('b_sess_id') == $result['id']) {
-	// 		echo '<div class="container"><div class="row"><div class="col-sm-4"></div><div class="col-sm-5 border border-dark shadow p-3 mb-5 bg-white rounded" style="padding: 10px; margin: 10px;">
-	// 			<form action="" method="post" class="form-group" enctype="multipart/form-data">
-	// 			<textarea id="postText" class="form-control" name="post"></textarea>
-	// 			<input type="file" name="file[]" multiple>
-	// 			<input type="hidden" name="token" value="'.Token::generate('bPostToken').'">
-	// 			<input type="hidden" name="id" value="'.$result['id'].'">
-	// 			<br>
-	// 			<button type="submit" class="btn btn-primary" style="float: right;">Post</button>
-	// 			</form>
-	// 			</div>
-	// 			<div class="col-sm-3"></div>
-	// 			</div></div>';
-	// 		}
-			$sql2 = "SELECT store_post.id as postid, store_id, b_name, b_username, b_profile, b_post, b_title, b_postprice, b_postdate FROM stores, store_post WHERE stores.id = store_post.store_id AND store_id = :id AND store_post.b_postverified = 1 ORDER BY store_post.id DESC LIMIT 0, 2";
-			$res = DB::query($sql2, [], true, ['id' => $result['id']]);
-			// echo '<div class="container">
-			// 		<div class="row">
-			// 		<div class="col-sm-2"></div>
-			// 		<div class="col-sm-8" id="appendpost">';
-			while ($row = $res->fetch()) {
-				array_push($posts,$row);
-				// echo '<div class="border border-dark shadow p-3 mb-5 bg-white rounded comment-container"><a href="../business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
-				// 	<b>'.$row['b_name'].'</b></a><br>
-				// 	<small><b>'.Validate::formatDate($row['b_postdate']).'</b></small><br><br>s
-				// 	<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_post'])).'</div>';
-					
-				// 	echo '<input type="hidden" class="postid" value="'.$row['postid'].'">
-				// 	<input type="hidden" class="c_count" value="">
-				// 	<hr><a href="#" class="comment">Comment</a>
-				// 	<div class="comments"></div></div>';
-			}
-			// echo '<div class="col-sm-2"></div></div></div>';
-			$sql3 = "SELECT ROUND(AVG(b_rate), 2) as brate FROM store_rate WHERE store_id = :storeid";
-			$brate = DB::query($sql3, [], true, ['storeid' => $result['id']])->fetch();
+		$sql2 = "SELECT store_wall_post.id as wallpostid, NULL as postid, store_id as store_id, NULL as b_title, bw_post as b_post, NULL as b_postprice, bw_postdate as b_postdate, bw_postedited as b_postedited, NULL as b_poststatus, NULL as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_wall_post, stores WHERE store_wall_post.store_id = stores.id AND store_id = :id
+			UNION ALL
+			SELECT NULL as wallpostid, store_post.id as postid, store_id as store_id, b_title as b_title, b_post as b_post, b_postprice as b_postprice, b_postdate as b_postdate, b_postedited as b_postedited, b_poststatus as b_poststatus, b_postverified as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_post, stores WHERE store_post.store_id = stores.id AND store_id = :id AND  b_postverified = 1 AND b_poststatus != 2 ORDER BY b_postdate DESC LIMIT 0, 5";
+		$res = DB::query($sql2, [], true, ['id' => $result['id']]);
+		while ($row = $res->fetch()) {
+			array_push($posts,$row);
+		}
+		$sql3 = "SELECT ROUND(AVG(b_rate), 2) as brate FROM store_rate WHERE store_id = :storeid";
+		$brate = DB::query($sql3, [], true, ['storeid' => $result['id']])->fetch();
 ?>
 	<main>
 	<div class="main-section">
@@ -359,6 +297,7 @@ if (!empty(Input::get('username'))) {
 
 <?php
 						}
+						echo '<div id="appendpost">';
 							if(count($posts) > 0){
 
 							foreach($posts as $post){
@@ -371,37 +310,66 @@ if (!empty(Input::get('username'))) {
 											<img src="/business_profiles/<?=$post['b_profile']?>" class="imgsmall">	
 											<div class="usy-name">
 												<h3><?=$post['b_name']?></h3>
-												<span><img src="images/clock.png" alt=""><?=Validate::formatDate($post['b_postdate'])?></span>
+												<span><?=Validate::formatDate($post['b_postdate'])?></span>
 											</div>
+											<!--<div class="usy-name" style="margin-left: 100px;">
+												<span class="post-edites">Edited</span>
+											</div>
+											<div class="usy-name" style="margin-left: 100px;">
+												<span class="post-status">Reserved</span>
+											</div>-->
 										</div>
+									<div class="ed-opts">
 <?php
+									if ($post['b_postedited'] == 1) {
+										echo '<span class="post-edited p-1 badge badge-pill badge-dark" style="font-size:12px;">Edited</span>';
+									} else {
+										echo '<span class="post-edited p-1" style="font-size:12px;"></span>';
+									}
+									if ($post['b_poststatus'] == 1) {
+											echo '<span class="post-reserved p-1 badge badge-pill badge-danger" style="font-size:12px;">Reserved</span>';
+									} else {
+										echo '<span class="post-reserved p-1" style="font-size:12px;"></span>';
+									}
 									if (Session::exist('b_sess_id') && $post['store_id'] == Session::get('b_sess_id')) {
-?>															
-										<div class="ed-opts">
-											<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
-											<ul class="template ed-options">
-												<li class="template edit-post"><a href="#" postID="<?=$post['postid']?>" title="">Edit Post</a></li>
-												<li class="template"><a href="#" title="">Mark as sold</a></li>
-												<li class="template"><a href="#" title="">Mark as reserved</a></li>
-												<li class="template"><a href="#" title="">Delete</a></li>
+										if (!empty($post['postid'])) {
+											echo '<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+												<ul class="template ed-options">
+													<li class="template edit-post"><a href="#" postID="'.$post['postid'].'">Edit Post</a></li>';
+											if ($post['b_poststatus'] == 1) {
+												echo '<li class="template mark-available"><a href="#" postID="'.$post['postid'].'">Mark as Available</a></li>';
+											} elseif ($post['b_poststatus'] == 0) {
+												echo '<li class="template mark-reserved"><a href="#" postID="'.$post['postid'].'">Mark as Reserved</a></li>';
+											}
+											echo '<li class="template post-sold"><a href="#" postID="'.$post['postid'].'">Done/Sold</a></li>';
+										} elseif (!empty($post['wallpostid'])) {
+											echo '<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
+												<ul class="template ed-options">
+													<li class="template edit-wallpost"><a href="#" postID="'.$post['wallpostid'].'">Edit Post</a></li>';	
+										}
+
+?>
 											</ul>
-										</div>
 <?php
 									}
 ?>
 									</div>
+								</div>
 									
 									<div class="job_descp">
 										<form id="edit-form"></form>
 										<!--<h3>Senior Wordpress Developer</h3>-->
-										<b><h3><?=$post['b_title']?></h3></b>
+<?php
+									if (!empty($post['postid'])) {
+?>
+										<h3 class="b-posttitle"><?=$post['b_title']?></h3><br>
 										<ul class="template job-dt">
 											<li class="template"><a style="color:black; font-size: 15px;">Price</a></li>
 											<li class="template">₱<span class="b-postprice"><?=$post['b_postprice']?></span></li>
 										</ul>
 										<p class="b-post"><?=$post['b_post']?></p>
 										<div class="row">
-											<?php  renderImages($post['postid']); ?>
+											<?php  Post::renderImages($post['postid']); ?>
 										</div>
 									</div>
 									<div class="edit-buttons">
@@ -414,11 +382,38 @@ if (!empty(Input::get('username'))) {
 										<input type="hidden" class="c_count" value="">
 										<div class="comments"></div>
 									</div>
+<?php
+									} elseif (!empty($post['wallpostid'])) {
+?>
+										<p class="b-post"><?=$post['b_post']?></p>
+										<div class="row">
+											<?php  Post::renderWallImages($post['wallpostid']); ?>
+										</div>
+										</div>
+										<div class="edit-buttons">
+										</div>
+										<div class="job-status-bar">
+											<ul class="template like-com">
+												<li class="template"><a href="#" title="" class="com wcomment"><img src="images/com.png" alt=""> Comment</a></li>
+											</ul>
+											<input type="hidden" class="wallpostid" value="<?=$post['wallpostid']?>">
+											<input type="hidden" class="wc_count" value="">
+											<div class="wcomments"></div>
+										</div>
+<?php
+									}
+?>
 								</div><!--post-bar end-->
 							</div><!--posts-section end-->
 <?php
 											}
 									}
+?>
+						</div>
+<?php
+						if (count($posts) == 5) {
+							echo '<a href="#" id="seemore">See More</a>';
+						}
 ?>
 						</div><!--main-ws-sec end-->
 					</div>
@@ -427,7 +422,7 @@ if (!empty(Input::get('username'))) {
 						<div class="right-sidebar">
 							<div class="widget widget-jobs">
 								<div class="sd-title">
-									<h3>Other Products/Services</h3>
+									<a href="/business/<?=$result['b_username']?>/offers"><h3>Services</h3></a>
 <?php
 									if (Session::exist('b_sess_id') && Session::get('b_sess_id') == $result['id']) {
 ?>
@@ -468,7 +463,7 @@ if (!empty(Input::get('username'))) {
 									$res = DB::query($sql5, [], true, ['id' => $result['id'], 'lim' => 5]);
 									while ($row2 = $res->fetch()) {
 ?>
-										<a href="/business/<?=$result['b_username']?>/products"><div class="job-details">
+										<a href="/business/<?=$result['b_username']?>/offers"><div class="job-details">
 											<h3><?=$row2['product_name']?></h3>
 										</div>
 										<div class="hr-rate">
@@ -484,12 +479,17 @@ if (!empty(Input::get('username'))) {
 								<div class="sd-title">
 									<h3>Rates and Reviews</h3><br>
 								</div>
-								<div class="jobs-list">
+								<div id="appendrates" class="jobs-list">
 <?php
-								$sql6 = "SELECT fname, lname, profile, username, b_rate, b_review, b_ratedate FROM users, store_rate WHERE store_rate.user_id = users.id AND store_id = :store_id";
+								$sql6 = "SELECT fname, lname, profile, username, b_rate, b_review, b_ratedate FROM users, store_rate WHERE store_rate.user_id = users.id AND store_id = :store_id ORDER BY store_rate.id DESC LIMIT 5";
 								$result2 = DB::query($sql6, [], true, ['store_id' => $result['id']]);
-								while ($row3 = $result2->fetch()) {
+								$rateList = [];
+								while ($asd = $result2->fetch()) {
+									array_push($rateList, $asd);
+								}
 
+							if (count($rateList) > 0) {
+								foreach ($rateList as $row3) {
 ?>
 								<div class="jobs-info p-1">
 									<a href="/user/<?=$row3['username']?>" style="color:black;">
@@ -515,11 +515,18 @@ if (!empty(Input::get('username'))) {
 								<hr>
 <?php
 								}
+							}
 ?>
 								</div><!--jobs-list end-->
+<?php
+							if (count($rateList) == 5) {
+?>
 								<div style="margin-bottom: 20px;text-align: center;">
-									<a href="#">See more</a>
+									<a href="#" id="seemorerate">See more</a>
 								</div>
+<?php
+							}
+?>
 							</div><!--widget-jobs end-->
 						</div><!--right-sidebar end-->
 					</div>
@@ -565,27 +572,30 @@ if (!empty(Input::get('username'))) {
     </div>
   </div>
 </div>
-<!--<div class="post-popup job_post">
-			<div class="post-project">
-				<h3>Post a job</h3>
-				<div class="post-project-fields">
-					<form>
-						<div class="row">
-							<div class="col-lg-12">
-								<textarea name="description" placeholder="Description"></textarea>
-							</div>
-							<div class="col-lg-12">
-								<ul>
-									<li><button class="active" type="submit" value="post">Post</button></li>
-									<li><a href="#" title="">Cancel</a></li>
-								</ul>
-							</div>
-						</div>
-					</form>-->
-				<!--</div>--><!--post-project-fields end-->
-				<!--<a href="#" title=""><i class="la la-times-circle-o"></i></a>
-			</div>--><!--post-project end-->
-		<!--</div>--><!--post-project-popup end-->
+
+<div class="modal fade" id="postDoneModal" tabindex="-1" role="dialog" aria-labelledby="postDoneModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postDoneModalLabel">Mark as Done/Sold</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+    	This post will be erased!<br>
+        Are you sure you want to mark this post as Done/Sold?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form class="postDoneForm">
+        	<input type="hidden" id="postDoneID" value="">
+        	<button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
@@ -597,8 +607,10 @@ if (!empty(Input::get('username'))) {
 <script src="/js/main.js"></script>
 <script>
 $(document).ready(function() {
-	var start = 2;
-	var limit = 1;
+	var start = 5;
+	var limit = 5;
+	var ratestart = 5;
+	var ratelimit = 5;
 	var pusher = new Pusher('be49c320ccd26cd0faa2', {
       cluster: 'ap1',
       forceTLS: true
@@ -645,13 +657,39 @@ $(document).ready(function() {
 				if (data != '') {
 					$("#appendpost").append(data);
 					start += limit;
+				} else {
+					$('#seemore').hide();
 				}
 			}
 		});
 	}
-	$(window).scroll(function() {
+	/*$(window).scroll(function() {
 			if ($(window).scrollTop() == $(document).height() - $(window).height())
 				getPosts();
+	});*/
+	$('body').on('click', '#seemore', function(e) {
+		e.preventDefault();
+		getPosts();
+	});
+	$('body').on('click', '#seemorerate', function(e) {
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showbusinessrates.php',
+			method: 'POST',
+			data: {
+				username: username,
+				start: ratestart,
+				limit: ratelimit
+			},
+			success: function(data) {
+				if (data != '') {
+					$("#appendrates").append(data);
+					ratestart += ratelimit;
+				} else {
+					$('#seemorerate').hide();
+				}
+			}
+		});
 	});
 	$('.post-jb').on('click', function(e) {
 		e.preventDefault();
@@ -696,6 +734,205 @@ $(document).ready(function() {
       	$el.height(this.scrollHeight - offset);
       	}
      });
+	$('body').on("click", ".wcomment", function(e) {
+		e.preventDefault();
+		var container = $(this).parent().parent().parent();
+		var id = container.find(".wallpostid").val();
+		var comments = container.find(".wcomments");
+		container.find(".wc_count").val(2);
+		$(this).css("visibility", "hidden");
+		$.ajax({
+			url: '/ajax/showwallcomments.php',
+			method: 'POST',
+			data: {
+				first: true,
+				postid: id,
+			},
+			success: function(data) {
+				comments.append(data);
+			}
+		});
+	});
+	$('body').on("click", ".wviewmorecomments", function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".wallpostid").val();
+		var cstart = parseInt(container.find(".wc_count").val());
+		var climit = 1;
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showwallcomments.php',
+			method: 'POST',
+			data: {
+				more: true,
+				postid: id,
+				cstart: cstart,
+				climit: climit
+			},
+			success: function(data) {
+				if (data == '') {
+					container.find(".wviewmorecomments").css("visibility", "hidden");
+					container.find(".wviewallcomments").css("visibility", "hidden");
+				} else {
+					container.find(".wappendcomment").append(data);
+					container.find(".wc_count").val(cstart+climit);
+				}
+			}
+		});
+	});
+	$('body').on('click', '.wviewallcomments', function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".wallpostid").val();
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showwallcomments.php',
+			method: 'POST',
+			data: {
+				all: true,
+				postid: id,
+			},
+			success: function(data) {
+				container.find('.wviewmorecomments').css('visibility', 'hidden');
+				container.find('.wviewallcomments').css('visibility', 'hidden');
+				container.find('.wappendcomment').html(data);
+				container.find('.wc_count').val('');
+			}
+		});
+	});
+	$('body').on('submit', '.wcomment-form', function(e) {
+		var container = $(this).parent().parent().parent();
+		var postid = container.find('.wallpostid').val();
+		var commenttext = container.find('.wcommentarea').val();
+		var ccount = parseInt(container.find(".wc_count").val());
+		e.preventDefault();
+		if (commenttext == '') {
+				
+		} else {
+			$.ajax({
+				url: '/ajax/addbusinesswallcomment.php',
+				method: 'POST',
+				data: {
+					postcomment: true,
+					postid: postid,
+					commenttext: commenttext
+				},
+				success: function(data) {
+					container.find('.wcommentarea').val('');
+					container.find('.wappendcomment').prepend(data);
+					container.find(".wc_count").val(ccount+1);
+					$.ajax({
+						url: '/ajax/pusheraddbusinesswallcomment.php',
+						method: 'POST',
+						data: {
+							pushcomment: true,
+							postid: postid,
+							b_username: username
+						}
+					});
+				}
+			});
+		}
+	});
+	$('body').on("click", ".wreply", function(e) {
+		e.preventDefault();
+		var container = $(this).parent();
+		var commentid = container.find(".wcommentid").val();
+		var replies = container.find(".wreplies");
+		container.find(".wr_count").val(2);
+		$(this).css("visibility", "hidden");
+		$.ajax({
+			url: '/ajax/showbusinesswallreplies.php',
+			method: 'POST',
+			data: {
+				first: true,
+				commentid: commentid
+			},
+			success: function(data) {
+				replies.append(data);
+			}
+		});
+	});
+	$('body').on('click', '.wviewmorereplies', function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".wcommentid").val();
+		var rstart = parseInt(container.find(".wr_count").val());
+		var rlimit = 1;
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showbusinesswallreplies.php',
+			method: 'POST',
+			data: {
+				more: true,
+				commentid: id,
+				rstart: rstart,
+				rlimit: rlimit
+			},
+			success: function(data) {
+				if (data == '') {
+					container.find(".wviewmorereplies").css("visibility", "hidden");
+					container.find(".wviewallreplies").css("visibility", "hidden");
+				} else {
+					container.find(".wappendreply").append(data);
+					container.find(".wr_count").val(rstart+rlimit);
+				}
+			}
+		});
+	});
+	$('body').on('click', '.wviewallreplies', function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".wcommentid").val();
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showbusinesswallreplies.php',
+			method: 'POST',
+			data: {
+				all: true,
+				commentid: id,
+			},
+			success: function(data) {
+				container.find('.wviewmorereplies').css('visibility', 'hidden');
+				container.find('.wviewallreplies').css('visibility', 'hidden');
+				container.find('.wappendreply').html(data);
+				container.find('.wr_count').val('');
+			}
+		});
+	});
+	$('body').on('submit', '.wreply-form', function(e) {
+		var container = $(this).parent().parent().parent();
+		var commentid = container.find('.wcommentid').val();
+		var postid = container.parent().parent().parent().find('.wallpostid').val();
+		var replytext = container.find('.wreplyarea').val();
+		var rcount = parseInt(container.find(".wr_count").val());
+		var username = '<?php echo Input::get('username'); ?>';
+		e.preventDefault();
+		if (replytext == '') {
+				
+		} else {
+			$.ajax({
+				url: '/ajax/addbusinesswallreply.php',
+				method: 'POST',
+				data: {
+					postreply: true,
+					commentid: commentid,
+					postid: postid,
+					replytext: replytext
+				},
+				success: function(data) {
+					container.find('.wreplyarea').val('');
+					container.find('.wappendreply').prepend(data);
+					container.find(".wr_count").val(rcount+1);
+					$.ajax({
+						url: '/ajax/pusheraddbusinesswallreply.php',
+						method: 'POST',
+						data: {
+							pushreply: true,
+							commentid: commentid,
+							u_username: username
+						}
+					});
+				}
+			});
+		}
+	});
 	$('body').on("click", ".comment", function(e) {
 		e.preventDefault();
 		var container = $(this).parent().parent().parent();
@@ -861,6 +1098,7 @@ $(document).ready(function() {
 	$('body').on('submit', '.reply-form', function(e) {
 		var container = $(this).parent().parent().parent();
 		var commentid = container.find('.commentid').val();
+		var postid = container.parent().parent().parent().find('.postid').val();
 		var replytext = container.find('.replyarea').val();
 		var rcount = parseInt(container.find(".r_count").val());
 		var username = '<?php echo Input::get('username'); ?>';
@@ -874,6 +1112,7 @@ $(document).ready(function() {
 				data: {
 					postreply: true,
 					commentid: commentid,
+					postid: postid,
 					replytext: replytext
 				},
 				success: function(data) {
@@ -927,7 +1166,8 @@ $(document).ready(function() {
 			}
 		});
 	});
-	$('body').on('click', '#store-rate', function() {
+	$('body').on('click', '#store-rate', function(e) {
+		e.preventDefault();
 		$('#ratingsModal').modal('show');
 	});
 	$('.rates').on('click', function() {
@@ -950,54 +1190,191 @@ $(document).ready(function() {
 		e.preventDefault();
 		$('#addOfferModal').modal('show');
 	});
-	$('.edit-post').on('click', function(e) {
+	$('body').on('click', '.edit-post', function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
 		var editdiv = $(this);
 		editdiv.hide();
 		var postID = e.target.attributes[1].value;
 		var postpriceID = "price-"+postID;
 		var postTextID  = "text-"+postID;
+		var postTitleID = "title-"+postID;
 		var editBtnID = "edit-"+postID;
 		var cancelBtnID = "cancel-"+postID;
 
 		var div = $(this).parent().parent().parent().parent();
+		var bposttitle = div.find('.b-posttitle');
+		var bposttitleval = div.find('.b-posttitle').html();
 		var bpost = div.find('.b-post');
 		var bposttext = div.find('.b-post').html();
 		var bpostprice = div.find('.b-postprice');
 		var bpostpriceval = div.find('.b-postprice').html();
 		//bpostprice = replaceWith('<input type="text" value="'+bpostpriceval+'">');
+		bposttitle.replaceWith('<input class="edit-post-title" id="'+postTitleID+'" form="edit-form" type="text" value="'+bposttitleval+'">');
 		bpostprice.replaceWith('<input class="edit-post-price" id="'+postpriceID+'"" form="edit-form" type="text" value="'+bpostpriceval+'">');
 		bpost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text">'+bposttext+'</textarea>');
 		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');
 
-		$("#"+editBtnID).click(function(e) {
+		$('body').on('click', '#'+editBtnID, function(e) {
 			e.preventDefault();
-			var editprice = parseInt($("#"+postpriceID).val());
+			var editprice = $("#"+postpriceID).val();
 			var edittext = $("#"+postTextID).val();
+			var edittitle = $("#"+postTitleID).val();
 			$.ajax({
 				url: '/ajax/editbusinesspostform',
 				method: 'post',
 				data:{
 					postid: postID,
+					edittitle: edittitle,
 					edittext: edittext,
 					editprice: editprice
 				},
 				success: function(data) {
-					$("#"+postpriceID).replaceWith('<span class="b-postprice">'+editprice+'</span>');
-					$("#"+postTextID).replaceWith('<p class="b-post">'+edittext+'</p>');
-					div.find('.edit-buttons').html('');
-					editdiv.show();
+					if (data == 'error') {
+						$("#"+postpriceID).replaceWith('<span class="b-postprice">'+bpostpriceval+'</span>');
+						$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
+						$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+bposttitleval+'</h3>');
+						div.find('.edit-buttons').html('');
+						editdiv.show();
+					} else {
+						$("#"+postpriceID).replaceWith('<span class="b-postprice">'+editprice+'</span>');
+						$("#"+postTextID).replaceWith('<p class="b-post">'+edittext+'</p>');
+						$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+edittitle+'</h3>');
+						div.find('.edit-buttons').html('');
+						div.find('.post-edited').html('Edited');
+						div.find('.post-edited').addClass('badge badge-pill badge-dark');
+						editdiv.show();
+					}
 				}
 			});
 		})
-		$("#"+cancelBtnID).click(function(e){
+		$('body').on('click', '#'+cancelBtnID, function(e){
 			e.preventDefault();
 			$("#"+postpriceID).replaceWith('<span class="b-postprice">'+bpostpriceval+'</span>');
+			$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
+			$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+bposttitleval+'</h3>');
+			div.find('.edit-buttons').html('');
+			editdiv.show();
+		})
+	});
+	$('body').on('click', '.edit-wallpost', function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var editdiv = $(this);
+		editdiv.hide();
+		var postID = e.target.attributes[1].value;
+		var postTextID  = "text-"+postID;
+		var editBtnID = "edit-"+postID;
+		var cancelBtnID = "cancel-"+postID;
+		var div = $(this).parent().parent().parent().parent();
+		var bpost = div.find('.b-post');
+		var bposttext = div.find('.b-post').html();
+		bpost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text">'+bposttext+'</textarea>');
+		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
+		var editsave = div.find('.edit-post-save');
+		var editcancel = div.find('.edit-post-cancel');
+
+		$('body').on('click', '#'+editBtnID, function(e) {
+			e.preventDefault();
+			var edittext = $("#"+postTextID).val();
+			$.ajax({
+				url: '/ajax/editbusinesswallpostform',
+				method: 'post',
+				data:{
+					postid: postID,
+					edittext: edittext,
+				},
+				success: function(data) {
+					if (data == 'error') {
+						$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
+						div.find('.edit-buttons').html('');
+						editdiv.show();
+					} else {
+						$("#"+postTextID).replaceWith('<p class="b-post">'+edittext+'</p>');
+						div.find('.edit-buttons').html('');
+						div.find('.post-edited').html('Edited');
+						div.find('.post-edited').addClass('badge badge-pill badge-dark');
+						editdiv.show();
+					}
+				}
+			});
+		})
+		$('body').on('click', '#'+cancelBtnID, function(e){
+			e.preventDefault();
 			$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
 			div.find('.edit-buttons').html('');
 			editdiv.show();
 		})
+	});
+	$('body').on('click', '.mark-reserved', function (e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var parent = $(this).parent();
+		var qwe = $(this).find('a');
+		var postID = e.target.attributes[1].value;
+		$.ajax({
+			url: '/ajax/editbusinesspoststatus.php',
+			method: 'post',
+			data: {
+				editreserved: true,
+				postid: postID
+			},
+			success: function() {
+				div.find('.post-reserved').html('Reserved');
+				div.find('.post-reserved').addClass('badge badge-pill badge-danger');
+				parent.find('.mark-reserved').removeClass("mark-reserved").addClass("mark-available");
+				qwe.html('Mark as Available');
+			}
+		});
+	});
+	$('body').on('click', '.mark-available', function (e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var parent = $(this).parent();
+		var qwe = $(this).find('a');
+		var postID = e.target.attributes[1].value;
+		$.ajax({
+			url: '/ajax/editbusinesspoststatus.php',
+			method: 'post',
+			data: {
+				editavailable: true,
+				postid: postID
+			},
+			success: function() {
+				div.find('.post-reserved').html('');
+				parent.find('.mark-available').removeClass("mark-available").addClass("mark-reserved");
+				qwe.html('Mark as Reserved');
+			}
+		});
+	});
+	$('body').on('click', '.post-sold', function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var postID = e.target.attributes[1].value;
+		$('#postDoneID').val(postID);
+		$('#postDoneModal').modal('show');
+		$('body').on('submit', '.postDoneForm', function(e) {
+			e.preventDefault();
+			var postDoneID = $('#postDoneID').val();
+			$.ajax({
+				url: '/ajax/editbusinesspoststatus.php',
+				method: 'post',
+				data: {
+					editdone: true,
+					postid: postDoneID
+				},
+				success: function() {
+					div.find('.post-reserved').html('Done');
+					$('#postDoneModal').modal('hide');
+					div.find('.ed-opts-open').hide();
+				}
+			});
+		});
 	});
 	channelpost.bind('postEvent', function(data) {
 		var username = "<?php echo Input::get('username'); ?>"

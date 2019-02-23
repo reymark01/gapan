@@ -1,35 +1,6 @@
 <?php
 require_once '../app/core/init.php';
 
-function renderImages($pid){
-	$sql = "SELECT * FROM user_post_photos WHERE user_post_id = :postid";
-	$result = DB::query($sql, [], true, ['postid' => $pid]);
-	$photos = [];
-	while ($row = $result->fetch()) {
-		array_push($photos, $row);
-	}
-	if (!empty($photos)) {
-		if (count($photos) == 1) {
-			echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/user_photos/'.$photos[0]['u_postphoto'].'"></div>';
-		} else {
-			echo '<div class="row">';
-			if (count($photos) > 4) {
-				for ($i=0;$i<4;$i++) {
-					echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/user_photos/'.$photos[$i]['u_postphoto'].'" style="width: 360px; height: 200px;"></div>';
-				}
-				echo '<div class="col-12 text-center">
-					<a href="/user/'.Input::get('username').'/post/'.$pid.'">See More</a>
-				</div>';
-			} else {
-				foreach ($photos as $photo) {
-					echo '<div class="col-md-6 p-1"><img class="img-fluid img-thumbnail" src="/user_photos/'.$photo['u_postphoto'].'" style="width: 360px; height: 200px;"></div>';
-				}
-			}
-			echo '</div>';
-		}
-	}
-}
-
 function renderReportModal($resultid, $fname, $lname){
 ?>
 	<div class="modal fade" id="reportUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -65,7 +36,7 @@ if (!empty(Input::get('username'))) {
 	$username = $_GET['username'];
 	$result = DB::query("SELECT * FROM users WHERE account_verified = 1 AND username = :username", ['username' => $username])->fetch();
 	if (!empty($result)) {
-		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, u_post, u_title, u_postprice, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id ORDER BY user_post.id DESC LIMIT 0, 2";
+		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, u_post, u_title, u_postprice, u_postedited, u_poststatus, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id AND u_poststatus != 2 ORDER BY user_post.id DESC LIMIT 0, 5";
 		$res = DB::query($sql, [], true, ['id' => $result['id'], 'veri' => 1]);
 		while ($row = $res->fetch()) {
 				array_push($posts,$row);
@@ -115,6 +86,7 @@ if (!empty(Input::get('username'))) {
 					</div>
 					<div class="col-lg-6 col-md-8 no-pd">
 						<div class="main-ws-sec">
+							<div id="appendpost">
 <?php
 						if(count($posts) > 0){
 
@@ -130,21 +102,36 @@ if (!empty(Input::get('username'))) {
 												<span><img src="images/clock.png" alt=""><?=Validate::formatDate($post["u_postdate"])?></span>
 											</div>
 										</div>
+										<div class="ed-opts">
 <?php
+										if ($post['u_postedited'] == 1) {
+											echo '<span class="post-edited p-1 badge badge-pill badge-dark" style="font-size:12px;">Edited</span>';
+										} else {
+											echo '<span class="post-edited p-1" style="font-size:12px;"></span>';
+										}
+										if ($post['u_poststatus'] == 1) {
+											echo '<span class="post-reserved p-1 badge badge-pill badge-danger" style="font-size:12px;">Reserved</span>';
+										} else {
+											echo '<span class="post-reserved p-1" style="font-size:12px;"></span>';
+										}
 										if (Session::exist('u_sess_id') && $result['id'] == Session::get('u_sess_id')) {
 ?>
-										<div class="ed-opts">
 											<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
 											<ul class="template ed-options">
-												<li class="template edit-post"><a href="#" postID="<?=$post["postid"]?>" title="">Edit Post</a></li,>
-												<li class="template"><a href="#" title="">Mark as sold</a></li>
-												<li class="template"><a href="#" title="">Mark as reserved</a></li>
-												<li class="template"><a href="#" title="">Delete</a></li>
+												<li class="template edit-post"><a href="#" postID="<?=$post["postid"]?>" title="">Edit Post</a></li>
+<?php
+										if ($post['u_poststatus'] == 1) {
+											echo '<li class="template mark-available"><a href="#" postID="'.$post['postid'].'">Mark as Available</a></li>';
+										} elseif ($post['u_poststatus'] == 0) {
+											echo '<li class="template mark-reserved"><a href="#" postID="'.$post['postid'].'">Mark as Reserved</a></li>';
+										}
+?>
+												<li class="template post-sold"><a href="#" postID="<?=$post['postid']?>">Done/Sold</a></li>
 											</ul>
-										</div>
 <?php
 										}
-?>										
+?>
+									</div>											
 									</div>
 									<div class="job_descp">
 										<form id="edit-form"></form>
@@ -156,7 +143,7 @@ if (!empty(Input::get('username'))) {
 										</ul>
 										<p class="u-post"><?=$post['u_post']?></p>
 										<div class="row">
-											<?php  renderImages($post['postid']); ?>
+											<?php  Post::renderUserImages($post['postid']); ?>
 										</div>
 									</div>
 									<div class="edit-buttons">
@@ -173,6 +160,12 @@ if (!empty(Input::get('username'))) {
 							</div><!--posts-section end-->
 <?php
 							}
+						}
+?>
+						</div>
+<?php
+						if (count($posts) == 5) {
+							echo '<a href="#" id="useemore">See More</a>';
 						}
 ?>
 						</div><!--main-ws-sec end-->
@@ -227,66 +220,32 @@ if (!empty(Input::get('username'))) {
 	</div>
 </main>
 <?php
-		/*echo '<div class="container">
-
-		<div class="row"><div class="col-sm-4"><img class="thumbnail_image" src="/user_profiles/'.$result['profile'].'"><br>'.
-			$result['fname'].' '.$result['lname'].'<br>
-			'.$result['email'].'<br>
-			'.$result['contact'].'</div></div></div>';
-	} else {
-		Redirect::to('../');*/
 	}
-	/*if (Session::exist('u_sess_id') && Session::get('u_sess_id') != $result['id']) {
-		$sql = "SELECT id FROM user_report WHERE reported_id = :reported_id AND user_id = :userid";
-		$rid = DB::query($sql, [], true, ['reported_id' => $result['id'], 'userid' => Session::get('u_sess_id')])->fetch();
-		if (empty($rid['id'])) {
-			echo '<button type="button" id="reportuserbutton" class="btn btn-primary" data-toggle="modal" data-target="#reportUserModal">Report</button>
-			<div class="modal fade" id="reportUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel">Report</h5>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-body">
-			      	Report <b>'.$result['fname'].' '.$result['lname'].'</b>
-			      </div>
-			      <div class="modal-footer">
-			      	<form id="reportUserForm">
-			      		<input type="hidden" id="ureportid" value="'.$result['id'].'">
-			        	<button type="submit" name="reportbtn" class="btn btn-primary">Report</button>
-			        </form>
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-			      </div>
-			    </div>
-			  </div>
-			</div><h1></1>';
-		}
-	}
-	echo '<div class="container">
-			<div class="row">
-			<div class="col-sm-2"></div>
-			<div class="col-sm-8" id="appendpost">';
-	while ($row = $res->fetch()) {
-		echo '<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="../business/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
-			<b>'.$row['fname'].' '.$row['lname'].'</b></a><br>
-			<small><b>'.Validate::formatDate($row['u_postdate']).'</b></small><br><br>
-			<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_post'])).'</div>';
-			if (!empty($row['u_postphoto'])) {
-				echo '<img class="img-fluid img-thumbnail imgbig" src="/user_photos/'.$row['u_postphoto'].'"><br>';
-			}
-			echo '<input type="hidden" class="upostid" value="'.$row['postid'].'">
-			<input type="hidden" class="uc_count" value="">
-			<hr><a href="#" class="ucomment">Comment</a>
-			<div class="ucomments"></div></div>';
-	}
-	echo '<div class="col-sm-2"></div></div></div>';
-} else {
-	Redirect::to('.');*/
 }
 ?>
+<div class="modal fade" id="postDoneModal" tabindex="-1" role="dialog" aria-labelledby="postDoneModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postDoneModalLabel">Mark as Done/Sold</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+    	This post will be erased!<br>
+        Are you sure you want to mark this post as Done/Sold?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form class="postDoneForm">
+        	<input type="hidden" id="postDoneID" value="">
+        	<button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
@@ -298,8 +257,8 @@ if (!empty(Input::get('username'))) {
 <script src="/js/main.js"></script>
 <script>
 $(document).ready(function() {
-	var start = 2;
-	var limit = 1;
+	var start = 5;
+	var limit = 5;
 	var u_sess_id = "<?php echo Session::exist('u_sess_id') ? Session::get('u_sess_id') : '' ?>";
 	var b_sess_id = "<?php echo Session::exist('b_sess_id') ? Session::get('b_sess_id') : '' ?>";
 	var pusher = new Pusher('be49c320ccd26cd0faa2', {
@@ -346,13 +305,19 @@ $(document).ready(function() {
 				if (data != '') {
 					$("#appendpost").append(data);
 					start += limit;
+				} else {
+					$('#useemore').hide();
 				}
 			}
 		});
 	}
-	$(window).scroll(function() {
+	/*$(window).scroll(function() {
 			if ($(window).scrollTop() == $(document).height() - $(window).height())
 				getUserPosts();
+	});*/
+	$('body').on('click', '#useemore', function(e) {
+		e.preventDefault();
+		getUserPosts();
 	});
 	$('body').on("click", ".ucomment", function(e) {
 		e.preventDefault();
@@ -519,6 +484,7 @@ $(document).ready(function() {
 	});
 	$('body').on('submit', '.ureply-form', function(e) {
 		var container = $(this).parent().parent().parent();
+		var postid = container.parent().parent().parent().find('.upostid').val();
 		var commentid = container.find('.ucommentid').val();
 		var replytext = container.find('.ureplyarea').val();
 		var urcount = parseInt(container.find(".ur_count").val());
@@ -533,6 +499,7 @@ $(document).ready(function() {
 				data: {
 					postreply: true,
 					commentid: commentid,
+					postid: postid,
 					replytext: replytext
 				},
 				success: function(data) {
@@ -572,7 +539,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	$('.edit-post').on('click', function(e) {
+	$('body').on('click', '.edit-post', function(e) {
 		e.preventDefault();
 		var editdiv = $(this);
 		editdiv.hide();
@@ -598,9 +565,9 @@ $(document).ready(function() {
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');
 
-		$("#"+editBtnID).click(function(e) {
+		$('body').on('click', '#'+editBtnID, function(e) {
 			e.preventDefault();
-			var editprice = parseInt($("#"+postpriceID).val());
+			var editprice = $("#"+postpriceID).val();
 			var edittext = $("#"+postTextID).val();
 			var edittitle = $("#"+postTitleID).val();
 			$.ajax({
@@ -613,15 +580,25 @@ $(document).ready(function() {
 					editprice: editprice
 				},
 				success: function(data) {
-					$("#"+postpriceID).replaceWith('<span class="u-postprice">'+editprice+'</span>');
-					$("#"+postTextID).replaceWith('<p class="u-post">'+edittext+'</p>');
-					$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+edittitle+'</h3>');
-					div.find('.edit-buttons').html('');
-					editdiv.show();
+					if (data == 'error') {
+						$("#"+postpriceID).replaceWith('<span class="u-postprice">'+upostpriceval+'</span>');
+						$("#"+postTextID).replaceWith('<p class="u-post">'+uposttext+'</p>');
+						$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+uposttitleval+'</h3>');
+						div.find('.edit-buttons').html('');
+						editdiv.show();
+					} else {
+						$("#"+postpriceID).replaceWith('<span class="u-postprice">'+editprice+'</span>');
+						$("#"+postTextID).replaceWith('<p class="u-post">'+edittext+'</p>');
+						$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+edittitle+'</h3>');
+						div.find('.edit-buttons').html('');
+						div.find('.post-edited').html('Edited');
+						div.find('.post-edited').addClass('badge badge-pill badge-dark');
+						editdiv.show();
+					}
 				}
 			});
 		})
-		$("#"+cancelBtnID).click(function(e) {
+		$('body').on('click', '#'+cancelBtnID, function(e) {
 			e.preventDefault();
 			$("#"+postpriceID).replaceWith('<span class="u-postprice">'+upostpriceval+'</span>');
 			$("#"+postTextID).replaceWith('<p class="u-post">'+uposttext+'</p>');
@@ -629,6 +606,74 @@ $(document).ready(function() {
 			div.find('.edit-buttons').html('');
 			editdiv.show();
 		})
+	});
+	$('body').on('click', '.mark-reserved', function (e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var parent = $(this).parent();
+		var qwe = $(this).find('a');
+		var postID = e.target.attributes[1].value;
+		$.ajax({
+			url: '/ajax/edituserpoststatus.php',
+			method: 'post',
+			data: {
+				editreserved: true,
+				postid: postID
+			},
+			success: function() {
+				div.find('.post-reserved').html('Reserved');
+				div.find('.post-reserved').addClass('badge badge-pill badge-danger');
+				parent.find('.mark-reserved').removeClass("mark-reserved").addClass("mark-available");
+				qwe.html('Mark as Available');
+			}
+		});
+	});
+	$('body').on('click', '.mark-available', function (e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var parent = $(this).parent();
+		var qwe = $(this).find('a');
+		var postID = e.target.attributes[1].value;
+		$.ajax({
+			url: '/ajax/edituserpoststatus.php',
+			method: 'post',
+			data: {
+				editavailable: true,
+				postid: postID
+			},
+			success: function() {
+				div.find('.post-reserved').html('');
+				parent.find('.mark-available').removeClass("mark-available").addClass("mark-reserved");
+				qwe.html('Mark as Reserved');
+			}
+		});
+	});
+	$('body').on('click', '.post-sold', function(e) {
+		e.preventDefault();
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		var div = $(this).parent().parent();
+		var postID = e.target.attributes[1].value;
+		$('#postDoneID').val(postID);
+		$('#postDoneModal').modal('show');
+		$('body').on('submit', '.postDoneForm', function(e) {
+			e.preventDefault();
+			var postDoneID = $('#postDoneID').val();
+			$.ajax({
+				url: '/ajax/edituserpoststatus.php',
+				method: 'post',
+				data: {
+					editdone: true,
+					postid: postDoneID
+				},
+				success: function() {
+					div.find('.post-reserved').html('Done');
+					$('#postDoneModal').modal('hide');
+					div.find('.ed-opts-open').hide();
+				}
+			});
+		});
 	});
 	channeladdusercomment.bind('addUserCommentEvent', function(data) {
 		var container = $('.upostid[value="'+data['postid']+'"]').parent();

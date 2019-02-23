@@ -3,7 +3,20 @@ require_once '../../app/core/newinit.php';
 require_once '../layout/header.php';
 ?>
 <div class="container">
-	<a href="/marketplace/post" class="btn btn-primary">Post to Marketplace</a> 
+	<a href="/marketplace/post" class="btn btn-primary">Post to Marketplace</a>
+	<div class="row">
+		<div class="col-sm-4"></div>
+		<form action="/marketplace/search" class="form-inline my-2 my-lg-0" method="get">
+			<div class="input-group">
+				<input class="form-control" name="q" type="search" placeholder="Marketplace Search" aria-label="Search">
+				<div class="input-group-append">
+					<button class="btn btn-primary my-2 my-sm-0" type="submit">
+						<span class="fas fa-search"></span>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 <br>
 <div class="container">

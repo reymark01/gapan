@@ -72,7 +72,7 @@
 							<a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="fas fa-bell"></i><span class="badge badge-pill badge-danger notif-count"></span>
 							</a>
-							<div class="dropdown-menu dropdown-menu-right notif-menu" aria-labelledby="notifdropdown"></div>
+							<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; overflow-y: scroll; overflow-x: hidden;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif">See more</a></div>
 						</li>
 						<?php
 					} elseif (Session::exist('admin_sess_id')) {

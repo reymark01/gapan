@@ -37,10 +37,10 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 						}
 					}
 ?>
-					<input type="hidden" class="upostid" value="'.$row['postid'].'">
+					<input type="hidden" class="upostid" value="<?=$row['postid']?>">
 					<input type="hidden" class="uc_count" value="">
 					<hr><a href="#" class="ucomment">Comment</a>
-					<div class="ucomments"></div></div>
+					<div class="ucomments"></div></div></div>
 					<div class="col-sm-2"></div></div></div>
 <?php
 			} else {
@@ -58,7 +58,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
-<script src="../../../js/main.js"></script>
+<script src="/js/main.js"></script>
 <script>
 $(document).ready(function() {
 	var u_sess_id = "<?php echo Session::exist('u_sess_id') ? Session::get('u_sess_id') : '' ?>";
@@ -179,6 +179,107 @@ $(document).ready(function() {
 						data: {
 							pushcomment: true,
 							postid: postid,
+							u_username: username
+						}
+					});
+				}
+			});
+		}
+	});
+	$('body').on("click", ".ureply", function(e) {
+		e.preventDefault();
+		var container = $(this).parent();
+		var commentid = container.find(".ucommentid").val();
+		var replies = container.find(".ureplies");
+		container.find(".ur_count").val(2);
+		$(this).css("visibility", "hidden");
+		$.ajax({
+			url: '/ajax/showuserreplies.php',
+			method: 'POST',
+			data: {
+				first: true,
+				commentid: commentid
+			},
+			success: function(data) {
+				replies.append(data);
+			}
+		});
+	});
+	$('body').on('click', '.uviewmorereplies', function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".ucommentid").val();
+		var rstart = parseInt(container.find(".ur_count").val());
+		var rlimit = 1;
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showuserreplies.php',
+			method: 'POST',
+			data: {
+				more: true,
+				commentid: id,
+				rstart: rstart,
+				rlimit: rlimit
+			},
+			success: function(data) {
+				if (data == '') {
+					container.find(".uviewmorereplies").css("visibility", "hidden");
+					container.find(".uviewallreplies").css("visibility", "hidden");
+				} else {
+					container.find(".uappendreply").append(data);
+					container.find(".ur_count").val(rstart+rlimit);
+				}
+			}
+		});
+	});
+	$('body').on('click', '.uviewallreplies', function(e) {
+		var container = $(this).parent().parent();
+		var id = container.find(".ucommentid").val();
+		e.preventDefault();
+		$.ajax({
+			url: '/ajax/showuserreplies.php',
+			method: 'POST',
+			data: {
+				all: true,
+				commentid: id,
+			},
+			success: function(data) {
+				container.find('.uviewmorereplies').css('visibility', 'hidden');
+				container.find('.uviewallreplies').css('visibility', 'hidden');
+				container.find('.uappendreply').html(data);
+				container.find('.ur_count').val('');
+			}
+		});
+	});
+	$('body').on('submit', '.ureply-form', function(e) {
+		var container = $(this).parent().parent().parent();
+		var postid = container.parent().parent().parent().find('.upostid').val();
+		var commentid = container.find('.ucommentid').val();
+		var replytext = container.find('.ureplyarea').val();
+		var urcount = parseInt(container.find(".ur_count").val());
+		var username = '<?php echo Input::get('username'); ?>';
+		e.preventDefault();
+		if (replytext == '') {
+				
+		} else {
+			$.ajax({
+				url: '/ajax/adduserreply.php',
+				method: 'POST',
+				data: {
+					postreply: true,
+					commentid: commentid,
+					postid: postid,
+					replytext: replytext
+				},
+				success: function(data) {
+					container.find('.ureplyarea').val('');
+					container.find('.uappendreply').prepend(data);
+					container.find(".ur_count").val(urcount+1);
+					$.ajax({
+						url: '/ajax/pusheradduserreply.php',
+						method: 'POST',
+						data: {
+							pushreply: true,
+							commentid: commentid,
 							u_username: username
 						}
 					});

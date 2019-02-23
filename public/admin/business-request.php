@@ -54,7 +54,7 @@ require_once '../../app/core/newinit.php';
             <li><a href="dashboard">Notifications</a></li>
             <li><a href="news-post">News Post</a></li>
             <li><a href="events-post">Events Post</a></li>
-            <li><a href="#">Announcements</a></li>
+            <li><a href="announce-post">Announcements</a></li>
           </ul>
         </div>
       </div>

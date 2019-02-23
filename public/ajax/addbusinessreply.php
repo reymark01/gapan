@@ -3,8 +3,8 @@ require_once '../../app/core/newinit.php';
 
 if (!empty(Input::get('postreply'))) {
 	if (Session::exist('u_sess_id')) {
-		$sql = "INSERT INTO store_reply (store_comment_id, user_id, b_reply) VALUES (:commentid, :user_id, :reply)";
-		if (DB::query($sql, ['reply' => Input::get('replytext')], true, ['commentid' => Input::get('commentid'), 'user_id' => Session::get('u_sess_id')])) {
+		$sql = "INSERT INTO store_reply (store_post_id, store_comment_id, user_id, b_reply) VALUES (:postid, :commentid, :user_id, :reply)";
+		if (DB::query($sql, ['reply' => Input::get('replytext')], true, ['commentid' => Input::get('commentid'), 'user_id' => Session::get('u_sess_id'), 'postid' => Input::get('postid')])) {
 			$newreply = "SELECT store_reply.id, store_reply.store_comment_id as cid, store_reply.b_reply, store_reply.b_replydate, users.fname, users.lname, users.username, users.profile FROM (store_reply LEFT JOIN users ON store_reply.user_id = users.id) WHERE store_reply.store_comment_id = :commentid AND store_reply.user_id = :uid ORDER BY store_reply.id DESC LIMIT :newlim";
 			$row = DB::query($newreply, [], true, ['commentid' => Input::get('commentid'), 'uid' => Session::get('u_sess_id'), 'newlim' => 1])->fetch();
 			$out = '';
@@ -15,8 +15,8 @@ if (!empty(Input::get('postreply'))) {
 			echo $out;
 		}	 	
 	} elseif (Session::exist('b_sess_id')) {
-		$sql = "INSERT INTO store_reply (store_comment_id, store_id, b_reply) VALUES (:commentid, :store_id, :reply)";
-		if (DB::query($sql, ['reply' => Input::get('replytext')], true, ['commentid' => Input::get('commentid'), 'store_id' => Session::get('b_sess_id')])) {
+		$sql = "INSERT INTO store_reply (store_post_id, store_comment_id, store_id, b_reply) VALUES (:postid, :commentid, :store_id, :reply)";
+		if (DB::query($sql, ['reply' => Input::get('replytext')], true, ['commentid' => Input::get('commentid'), 'store_id' => Session::get('b_sess_id'), 'postid' => Input::get('postid')])) {
 			$newreply = "SELECT store_reply.id, store_reply.store_comment_id as cid, store_reply.b_reply, store_reply.b_replydate, stores.b_name, stores.b_username, stores.b_profile FROM (store_reply LEFT JOIN stores ON store_reply.store_id = stores.id) WHERE store_reply.store_comment_id = :commentid AND store_reply.store_id = :bid ORDER BY store_reply.id DESC LIMIT :newlim";
 			$row = DB::query($newreply, [], true, ['commentid' => Input::get('commentid'), 'bid' => Session::get('b_sess_id'), 'newlim' => 1])->fetch();
 			$out = '';

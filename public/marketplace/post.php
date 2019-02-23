@@ -8,6 +8,9 @@ if (Input::exist()) {
 	if (Token::check('uPostToken', Input::get('token'))) {
 		$validate = new Validate();
 		$validation = $validate->check($_POST, array(
+			'title' => array(
+				'required' => true,
+			),
 			'price' => array(
 				'required' => true,
 				'pregmatch' => 'e'
@@ -52,7 +55,11 @@ if (Input::exist()) {
 				$errors = '';
 				foreach($validation->errors() as $err) {
 					foreach($err as $field => $error) {
-						$errors .= 'Image '.$error.'<br>';
+						if ($field == 'price') {
+							$errors .= 'Price '.$error.'<br>';
+						} elseif ($field == 'title') {
+							$errors .= 'Title'.$error.'<br>';
+						}
 					}
 				}
 				Session::flash('postFail', $errors);

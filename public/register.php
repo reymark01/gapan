@@ -34,7 +34,9 @@ if (Input::exist()) {
 			),
 			'contact' => array(
 				'required' => true,
-				'pregmatch' => 'c'
+				'pregmatch' => 'c',
+				'min' => 11,
+				'max' => 11
 			),
 			'email' => array(
 				'pregmatch' => 'email'
@@ -50,7 +52,7 @@ if (Input::exist()) {
 			}
 			$hash = password_hash(Input::get('password'), PASSWORD_DEFAULT);
 			$sql = "INSERT INTO stores (b_name, b_username, b_type, b_profile, b_address, b_contact, b_email, user_id) VALUES (:b_name, :b_username, :b_type, :b_profile, :b_address, :b_contact, :b_email, :user_id)";
-			if (DB::query($sql, ['b_name' => htmlspecialchars(Input::get('bname')), 'b_username' => htmlspecialchars(Input::get('username')), 'b_type' => Input::get('option'), 'b_profile' => $key, 'b_address' => htmlspecialchars(Input::get('address')), 'b_contact' => htmlspecialchars(Input::get('contact')), 'b_email' => htmlspecialchars(Input::get('email')), 'user_id' => Session::get('u_sess_id')])) {
+			if (DB::query($sql, ['b_name' => htmlspecialchars(Input::get('bname')), 'b_username' => htmlspecialchars(Input::get('username')), 'b_type' => Input::get('option'), 'b_profile' => $key, 'b_address' => htmlspecialchars(Input::get('address')), 'b_contact' => htmlspecialchars(Input::get('contact')), 'b_email' => htmlspecialchars(Input::get('email'))], true, ['user_id' => Session::get('u_sess_id')])) {
 				if (!empty($_FILES['file']['name'])) {
 					move_uploaded_file($tmp_name, $bprofiles);
 				}

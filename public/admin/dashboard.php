@@ -57,7 +57,7 @@ if (!Session::exist('admin_sess_id')) {
             <li><a href="dashboard">Notifications</a></li>
             <li><a href="news-post">News Post</a>
             <li><a href="events-post">Events Post</a>
-            <li><a href="../GapanCity">Announcements</a>
+            <li><a href="announce-post">Announcements</a>
 
 
             </li>
@@ -152,6 +152,19 @@ if (!Session::exist('admin_sess_id')) {
                         </div>
                 </div>
                 </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-4">
+              <a href="contactus-messages">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="text-muted vb">Contact Us Messages <span id="contactus-count" class="badge badge-pill badge-danger"></span></h5> 
+                </div>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       
   
@@ -257,12 +270,27 @@ if (!Session::exist('admin_sess_id')) {
         } 
       });
     }
+    var contactUsCount = function() {
+      $.ajax({
+        url: 'contactus-count.php',
+        method: 'post',
+        data: {contactusmessages: true},
+        success: function(data) {
+          if (data > 0) {
+            $("#contactus-count").html(data);
+          } else {
+            $("#contactus-count").html('');
+          }
+        }
+      });
+    }
     userRequestCount();
     businessRequestCount();
     userPostRequestCount();
     businessPostRequestCount();
     businessReportCount();
     userReportCount();
+    contactUsCount();
   });
 </script>
   </body>

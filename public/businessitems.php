@@ -2,66 +2,19 @@
 require_once '../app/core/init.php';
 require_once 'layout/header.php';
 
-if (Input::exist()) {
-	if (!empty(Input::get('addproduct'))) {
-		$validate = new Validate();
-		$validation = $validate->check($_POST, array(
-			'name' => array(
-				'required' => true,
-			),
-			'price' => array(
-				'required' => true,
-				'pregmatch' => 'f'
-			),
-			'file' => array(
-				'ftype' => array('jpg', 'jpeg', 'png')
-			)
-		));
-		if ($validation->passed()) {
-			if (!empty($_FILES['file']['name'])) {
-				$key = Token::uniqKey('store_products', 'product_photo');
-				$tmp_name = $_FILES['file']['tmp_name'];
-				$productsphoto = 'product_photos/'.$key;
-			} else {
-				$key = '';
-			}
-			$sql = "INSERT INTO store_products (store_id, product_name, product_price, product_qty, product_photo) VALUES (:id, :name, :price, :qty, :photo)";
-			if (DB::query($sql, ['name' => Input::get('name'), 'photo' => $key], true, ['id' => Input::get('id'), 'price' => Input::get('price'), 'qty' => Input::get('qty')])) {
-				if (!empty($_FILES['file']['name'])) {
-					move_uploaded_file($tmp_name, $productsphoto);
-				}
-			}
-		}
-	}
-}
-if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('tab') == 'products') {
+if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('tab') == 'offers') {
 	$result = DB::query("SELECT * FROM stores WHERE b_account_verified = :one AND b_username = :username", ['username' => Input::get('username')], true, ['one' => 1])->fetch();
 	if (!empty($result)) {
-		if (Session::exist('b_sess_id') && Session::get('b_sess_id') == $result['id']) {
+			$sql = "SELECT * FROM store_products WHERE store_id = :id";
+			$result = DB::query($sql, [], true, ['id' => $result['id']]);
 ?>
-
-	<div class="container">
-		<form class="form-group" action="" method="post" enctype="multipart/form-data">
-			<label>Product Name</label><input class="form-control" type="text" name="name">
-			<label>Price</label><input class="form-control" type="text" name="price">
-			<label>Quantity</label><input class="form-control" type="text" name="qty">
-			<label>Picture</label><input class="form-control" type="file" name="file">
-			<input type="hidden" name="id" value="<?=$result['id']?>">
-			<button type="submit" name="addproduct" value="addproduct">Save</button>
-		</form>
-	</div>
+			<div class="row">
 <?php
-		}
-		$sql = "SELECT * FROM store_products WHERE store_id = :id";
-		$result = DB::query($sql, [], true, ['id' => $result['id']]);
-?>
-		<div class="row">
-<?php
-		while($row = $result->fetch()) {
+			while($row = $result->fetch()) {
 ?>			
-			<div class="col-sm-3">
-            	<div class="card" style="margin: 15px; ">
-            		<div class="card-body">
+				<div class="col-sm-3">
+            		<div class="card" style="margin: 15px; ">
+            			<div class="card-body">
  <?php
  						if (!empty($row['product_photo'])) {
 							echo '<img src="/product_photos/'.$row['product_photo'].'" style="width: 100px; height: 100px;"><br>';
@@ -95,10 +48,7 @@ if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('t
 						<hr>
             			<span style="text-align:center; font-size: 30px;"><?=$row['product_name']?></span><br>
             			Price: <?=$row['product_price']?><br>
-            			Quantity: <?=$row['product_qty']?>
             			<div class="card-footer">
-            				
-	            				<!---->
             			</div>
 					</div>
 				</div>
@@ -106,41 +56,37 @@ if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('t
 <?php
 		}
 ?>
-		</div>
-		<div class="modal fade" id="ratingsModal" tabindex="-1" role="dialog" aria-labelledby="ratingsModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-		    	<div class="modal-content">
-		    		<div class="modal-header">
-		    			<div class="modal-title"></div>
-			        	<button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
-			        		<span aria-hidden="true">&times;</span>
-			        	</button>
-		      		</div>
-		    		<div class="modal-body">
-		    			<h3>Rate <span id="prod_name"></span></h3><br>
-		      			<form id="rateProductForm">
-							<span id="rate1" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-							<span id="rate2" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-							<span id="rate3" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-							<span id="rate4" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-							<span id="rate5" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-		      				<input id="rate" type="hidden" value="">
-		      				<input id="prod_id" type="hidden" value="">
-		      		</div>
-		      		<div class="modal-footer">
-		        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-		        		<button type="submit" class="btn btn-primary">Submit</button>
-		      			</form>
-		      		</div>
-		    	</div>
-		  	</div>
-		</div>
+	</div>
+	<div class="modal fade" id="ratingsModal" tabindex="-1" role="dialog" aria-labelledby="ratingsModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+	    	<div class="modal-content">
+	    		<div class="modal-header">
+	    			<div class="modal-title"></div>
+		        	<button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+		        		<span aria-hidden="true">&times;</span>
+		        	</button>
+	      		</div>
+	    		<div class="modal-body">
+	    			<h3>Rate <span id="prod_name"></span></h3><br>
+	      			<form id="rateProductForm">
+						<span id="rate1" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+						<span id="rate2" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+						<span id="rate3" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+						<span id="rate4" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+						<span id="rate5" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+	      				<input id="rate" type="hidden" value="">
+	      				<input id="prod_id" type="hidden" value="">
+	      		</div>
+	      		<div class="modal-footer">
+	        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	        		<button type="submit" class="btn btn-primary">Submit</button>
+	      			</form>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>
 <?php
-	} else {
-		echo '!';
 	}
-} else {
-	//Redirect::to('marketplace');
 }
 ?>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

@@ -21,6 +21,48 @@
     </div>
   </div>
 </div>
+<footer class="footer-distributed">
+
+  <div class="footer-left">
+
+    <h3>Company<span>logo</span></h3>
+
+    <p class="footer-links">
+      <a href="#">Home</a>
+      ·
+      <a href="#">About</a>
+      ·
+      <a href="#">Faq</a>
+      ·
+      <a href="#">Contact</a>
+    </p>
+
+    <p class="footer-company-name">Company Name &copy; 2015</p>
+
+    <div class="footer-icons">
+
+      <a href="#"><i class="fa fa-facebook"></i></a>
+      <a href="#"><i class="fa fa-twitter"></i></a>
+      <a href="#"><i class="fa fa-linkedin"></i></a>
+      <a href="#"><i class="fa fa-github"></i></a>
+
+    </div>
+
+  </div>
+
+  <div class="footer-right">
+
+    <p>Contact Us</p>
+
+    <form id="contactUsForm" action="#" method="post">
+      <input type="text" id="contactUsEmail" name="email" placeholder="Email" />
+      <textarea id="contactUsMessage" name="message" placeholder="Message"></textarea>
+      <button>Send</button>
+    </form>
+
+  </div>
+
+</footer>
 <script>
 $('#switchAccountModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget)
@@ -34,7 +76,7 @@ $('#switchAccountModal').on('show.bs.modal', function (event) {
   modal.find('.modal-body #u-username').val(u_username)
  })
 
-$('#switchAccountForm').on('submit', function(e) {
+$('body').on('submit', '#switchAccountForm', function(e) {
 	e.preventDefault();
 	var busername = $(this).find('#b-username').val();
 	var uusername = $(this).find('#u-username').val();
@@ -63,7 +105,29 @@ $('#switchAccountForm').on('submit', function(e) {
 			}
 		})
 	}
-	
+})
+$('body').on('submit', '#contactUsForm', function(e) {
+  e.preventDefault();
+  var email = $(this).find('#contactUsEmail').val();
+  var message = $(this).find('#contactUsMessage').val();
+  var emailContainer = $(this).find('#contactUsEmail');
+  var messageContainer = $(this).find('#contactUsMessage');
+  if (email != '' && message != '') {
+    $.ajax({
+      url: '/ajax/contactus.php',
+      method: 'post',
+      data: {
+        email: email,
+        message: message
+      },
+      success: function (data) {
+        if (data == 'success') {
+          emailContainer.val('');
+          messageContainer.val('');
+        }
+      }
+    });
+  }
 })
 </script>
 </body>

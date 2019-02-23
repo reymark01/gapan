@@ -24,8 +24,8 @@ if (Input::exist()) {
 			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['b_commentdate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_comment'])).'</div></div>';
 			$pusher->trigger('addBusinessCommentChannel', 'addBusinessCommentEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'postid' => $row['pid']));
-			$sql2 = "INSERT INTO store_notification (store_id, b_notif_from, b_from_id, b_notif_type, b_link, b_link_id) VALUES (:store_id, :b_notif_from, :b_from_id, :b_notif_type, :b_link, :b_link_id)";
-			if (DB::query($sql2, ['b_notif_from' => 'user', 'b_notif_type' => 'comment', 'b_link' => 'post'], true, ['store_id' => $storeid['id'], 'b_from_id' => Session::get('u_sess_id'), 'b_link_id' => $row['pid']])) {
+			$sql2 = "INSERT INTO store_notification (store_id, b_notif_from, b_from_id, b_notif_type, b_link, b_linkto, b_link_id) VALUES (:store_id, :b_notif_from, :b_from_id, :b_notif_type, :b_link, :b_linkto, :b_link_id)";
+			if (DB::query($sql2, ['b_notif_from' => 'user', 'b_notif_type' => 'comment', 'b_link' => 'post', 'b_linkto' => 'post'], true, ['store_id' => $storeid['id'], 'b_from_id' => Session::get('u_sess_id'), 'b_link_id' => $row['pid']])) {
 			 	$pusher->trigger('bAddNotifyChannel', 'bAddNotifyEvent', ['b_id' => $storeid['id'], 'count' => 1]);
 			}
 		} elseif (Session::exist('b_sess_id')) {
@@ -38,8 +38,8 @@ if (Input::exist()) {
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_comment'])).'</div></div>';
 			$pusher->trigger('addBusinessCommentChannel', 'addBusinessCommentEvent', array('output' => $out, 'bid' => Session::get('b_sess_id'), 'postid' => $row['pid']));
 			if (Session::get('b_sess_id') != $storeid['id']) {
-			$sql2 = "INSERT INTO store_notification (store_id, b_notif_from, b_from_id, b_notif_type, b_link, b_link_id) VALUES (:store_id, :b_notif_from, :b_from_id, :b_notif_type, :b_link, :b_link_id)";
-			if (DB::query($sql2, ['b_notif_from' => 'store', 'b_notif_type' => 'comment', 'b_link' => 'post'], true, ['store_id' => $storeid['id'], 'b_from_id' => Session::get('b_sess_id'), 'b_link_id' => $row['pid']])) {
+			$sql2 = "INSERT INTO store_notification (store_id, b_notif_from, b_from_id, b_notif_type, b_link, b_linkto, b_link_id) VALUES (:store_id, :b_notif_from, :b_from_id, :b_notif_type, :b_link, :b_linkto, :b_link_id)";
+			if (DB::query($sql2, ['b_notif_from' => 'store', 'b_notif_type' => 'comment', 'b_link' => 'post', 'b_linkto' => 'post'], true, ['store_id' => $storeid['id'], 'b_from_id' => Session::get('b_sess_id'), 'b_link_id' => $row['pid']])) {
 					$pusher->trigger('bAddNotifyChannel', 'bAddNotifyEvent', ['b_id' => $storeid['id'], 'count' => 1]);
 				}
 			}

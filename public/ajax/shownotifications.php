@@ -19,14 +19,26 @@ if (Input::exist() && !empty(Input::get('postgetnotifications'))) {
 			} elseif ($row['notif_from'] == 'user') {
 				$res = DB::query("SELECT fname, lname, profile FROM users WHERE id = :uid", [], true, ['uid' => $row['from_id']])->fetch();
 				if ($row['notif_type'] == 'comment') {
-					$output .= '<a href="/user/'.Session::get('u_sess_username').'/post/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= '<a href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
 					$output .= $res['fname'].' '.$res['lname'].' commented on your post<br>';
+				} elseif ($row['notif_type'] == 'reply') {
+					$output .= '<a href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['fname'].' '.$res['lname'].' replied on your post<br>';
+				} elseif ($row['notif_type'] == 'commentreply') {
+					$output .= '<a href="/'.$row['linkusertype'].'/'.$row['link'].'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['fname'].' '.$res['lname'].' replied on your comment<br>';
 				}
 			} elseif ($row['notif_from'] == 'store') {
 				$res = DB::query("SELECT b_name, b_profile FROM stores WHERE id = :uid", [], true, ['uid' => $row['from_id']])->fetch();
 				if ($row['notif_type'] == 'comment') {
-					$output .= '<a href="/user/'.Session::get('u_sess_username').'/post/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/business_profiles/'.$res['b_profile'].'">';
+					$output .= '<a href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/business_profiles/'.$res['b_profile'].'">';
 					$output .= $res['b_name'].' commented on your post<br>';
+				} elseif ($row['notif_type'] == 'reply') {
+					$output .= '<a href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/business_profiles/'.$res['b_profile'].'">';
+					$output .= $res['b_name'].' replied on your post<br>';
+				} elseif ($row['notif_type'] == 'commentreply') {
+					$output .= '<a href="/'.$row['linkusertype'].'/'.$row['link'].'/'.$row['linkto'].'/'.$row['link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/business_profiles/'.$res['b_profile'].'">';
+					$output .= $res['b_name'].' replied on your comment<br>';
 				}
 			}
 			$output .= '<small class="text-muted">'.Validate::formatDate($row['notif_date']).'</small></li></a><hr></div>';
@@ -43,13 +55,27 @@ if (Input::exist() && !empty(Input::get('postgetnotifications'))) {
 			if ($row['b_notif_from'] == 'user') {
 				$res = DB::query("SELECT fname, lname, profile FROM users WHERE id = :uid", [], true, ['uid' => $row['b_from_id']])->fetch();
 				if ($row['b_notif_type'] == 'comment') {
-					$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/post/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="user_profiles/'.$res['profile'].'">';
+					$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
 					$output .= $res['fname'].' '.$res['lname'].' commented on your post<br>';
+				} elseif ($row['b_notif_type'] == 'reply') {
+					$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['fname'].' '.$res['lname'].' replied on your post<br>';
+				} elseif ($row['b_notif_type'] == 'commentreply') {
+					$output .= '<a href="/'.$row['b_linkusertype'].'/'.$row['b_link'].'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['fname'].' '.$res['lname'].' replied on your comment<br>';	
 				}
 			} else if ($row['b_notif_from'] == 'store') {
 				$res = DB::query("SELECT b_name, b_profile FROM stores WHERE id = :uid", [], true, ['uid' => $row['b_from_id']])->fetch();
-				$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/post/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="business_profiles/'.$res['b_profile'].'">';
-				$output .= $res['b_name'].' commented on your post<br>';
+				if ($row['b_notif_type'] == 'comment') {
+					$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['b_name'].' commented on your post<br>';
+				} elseif ($row['b_notif_type'] == 'reply') {
+					$output .= '<a href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/user_profiles/'.$res['profile'].'">';
+					$output .= $res['b_name'].' replied on your post<br>';
+				} elseif ($row['b_notif_type'] == 'commentreply') {
+					$output .= '<a href="/'.$row['b_linkusertype'].'/'.$row['b_link'].'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><li class="dropdown-item"><img class="imgsmall" src="/business_profiles/'.$res['b_profile'].'">';
+					$output .= $res['b_name'].' replied on your comment<br>';
+				}
 			}
 			$output .= '<small class="text-muted">'.Validate::formatDate($row['b_notif_date']).'</small></li></a><hr></div>';
 			echo $output; 

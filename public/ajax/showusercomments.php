@@ -13,7 +13,7 @@ if (Input::exist()) {
 						</div><hr>
 					</div>';
 			} else {
-				echo '<a href="#">Login</a><hr>';
+				echo '<a href="/login">Login</a><hr>';
 			}
 			$sql = "SELECT  user_post_comments.id, user_post_comments.u_comment, user_post_comments.u_commentdate, stores.b_name, stores.b_profile, stores.b_username, users.fname, users.lname, users.username, users.profile FROM ((user_post_comments LEFT JOIN stores ON user_post_comments.store_id = stores.id) LEFT JOIN users ON user_post_comments.user_id = users.id) WHERE user_post_comments.user_post_id = :postid ORDER BY user_post_comments.id DESC LIMIT 0, 2";
 			$results = DB::query($sql, [], true, ['postid' => Input::get('postid')]);

@@ -25,8 +25,8 @@ if (Input::exist()) {
 				 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div></div>';
 				$pusher->trigger('addUserCommentChannel', 'addUserCommentEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'postid' => $row['pid']));
 				if (Session::get('u_sess_id') != $userid['id']) {
-					$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :link_id)";
-					if (DB::query($sql2, ['notif_from' => 'user', 'notif_type' => 'comment', 'link' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('u_sess_id'), 'link_id' => $row['pid']])) {
+					$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, linkto, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :linkto, :link_id)";
+					if (DB::query($sql2, ['notif_from' => 'user', 'notif_type' => 'comment', 'link' => 'post', 'linkto' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('u_sess_id'), 'link_id' => $row['pid']])) {
 					 	$pusher->trigger('uAddNotifyChannel', 'uAddNotifyEvent', ['u_id' => $userid['id'], 'count' => 1]);
 					}
 				}		
@@ -39,8 +39,8 @@ if (Input::exist()) {
 			$out .= '<br><small class="text-muted">'.Validate::formatDate($row['u_commentdate']).'</small>
 			 <br><br><div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_comment'])).'</div></div>';
 			$pusher->trigger('addUserCommentChannel', 'addUserCommentEvent', array('output' => $out, 'bid' => Session::get('b_sess_id'), 'postid' => $row['pid']));
-			$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :link_id)";
-			if (DB::query($sql2, ['notif_from' => 'store', 'notif_type' => 'comment', 'link' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('b_sess_id'), 'link_id' => $row['pid']])) {
+			$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, linkto, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :linkto, :link_id)";
+			if (DB::query($sql2, ['notif_from' => 'store', 'notif_type' => 'comment', 'link' => 'post', 'linkto' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('b_sess_id'), 'link_id' => $row['pid']])) {
 				$pusher->trigger('uAddNotifyChannel', 'uAddNotifyEvent', ['u_id' => $userid['id'], 'count' => 1]);
 			}
 		}

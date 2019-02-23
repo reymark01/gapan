@@ -7,6 +7,7 @@
 <title>Gapan City Website</title>
 <link rel="shortcut icon" type="image/x-icon" href="/image/seal.png" />
 <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">-->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>

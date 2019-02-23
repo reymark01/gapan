@@ -52,9 +52,9 @@ require_once '../../app/core/newinit.php';
           <h5 class="sidenav-heading">Main</h5>
           <ul id="side-main-menu" class="side-menu list-unstyled">
             <li><a href="dashboard">Notifications</a></li>
-            <li><a href="news-post">News Post</a>            </li>
-            <li><a href="events-post">Events Post</a>            </li>
-            <li><a href="#">Announcements</a>            </li>
+            <li><a href="news-post">News Post</a></li>
+            <li><a href="events-post">Events Post</a></li>
+            <li><a href="announce-post">Announcements</a></li>
 
 
 

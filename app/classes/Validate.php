@@ -27,12 +27,12 @@ class Validate {
 					switch($rule) {
 						case 'min' :
 							if (strlen($value) < $rulevalue) {
-								$this->addError([$item => "must be greater than {$rulevalue} characters"]);
+								$this->addError([$item => "must not be less than {$rulevalue} characters"]);
 							}
 						break;
 						case 'max' :
 							if (strlen($value) > $rulevalue) {
-								$this->addError([$item => "must be less than {$rulevalue} characters"]);
+								$this->addError([$item => "must not be greater than {$rulevalue} characters"]);
 							}
 						break;
 						case 'matches' :
@@ -42,7 +42,7 @@ class Validate {
 						break;
 						case 'pregmatch' :
 							if ($rulevalue == 'a') {
-								if (!preg_match("/^[a-zA-Z ]*$/", $value)) {
+								if (!preg_match("/^[a-zA-Z -.]*$/", $value)) {
 									$this->addError([$item => 'is invalid']);
 								}
 							} elseif ($rulevalue == 'b') {
@@ -54,7 +54,7 @@ class Validate {
 									$this->addError([$item => 'is invalid']);
 								}
 							} elseif ($rulevalue == 'c') {
-								if (!preg_match("/^[0-9-]*$/", $value)) {
+								if (!preg_match("/^[0-9]*$/", $value)) {
 									$this->addError([$item => 'is invalid']);
 								}
 							} elseif ($rulevalue == 'd') {
@@ -68,6 +68,10 @@ class Validate {
 							} elseif ($rulevalue == 'f') {
 								if (!preg_match("/^[0-9.]*$/", $value)) {
 									$this->addError([$item => 'is invalid']);
+								}
+							} elseif ($rulevalue == 'password') {
+								if (!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z@#\-_$%^&+=!\?]*$/', $value)) {
+									$this->addError([$item => 'does not meet the requirements! '.ucfirst($item).' must have letters and numbers']);
 								}
 							}
 						break;
@@ -221,5 +225,25 @@ class Validate {
 			}
 		}
 		return $month.' '.$date[2].', '.$date[0].' at '.$newtime;
+	}
+
+	public static function rate($rate) {
+		switch ($rate) {
+			case 1:
+				$q = -17;
+				break;
+			case 2:
+				$q = -7;
+				break;
+			case 3:
+				$q = 1;
+				break;
+			case 4:
+				$q = 7;
+				break;
+			case 5:
+				$q = 17;
+		}
+		return $q;
 	}
 }
