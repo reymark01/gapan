@@ -5,13 +5,21 @@ if (Input::exist()) {
 	if (!empty(Input::get('postid'))) {
 		if (!empty(Input::get('first'))) {
 			if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
-				echo '<div class="container">
-						<form class="form-group ucomment-form">
-						<textarea class="form-control ucommentarea" name="comment"></textarea>
-						<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
-						</form>
-						</div><hr>
-					</div>';
+				echo '<div class="container row">
+						<div class="col-sm-2">';
+						if (Session::exist('u_sess_id')) {
+							echo '<img class="imgsmall rounded-circle" src="/user_profiles/'.Session::get('u_sess_profile').'">';
+						} elseif (Session::exist('b_sess_id')) {
+							echo '<img class="imgsmall rounded-circle" src="/business_profiles/'.Session::get('b_sess_profile').'">';
+						}
+				echo '<div>
+						<div class="col-sm-10">
+							<form class="form-group ucomment-form">
+							<textarea class="form-control ucommentarea" name="comment"></textarea>
+							<button type="submit" class="btn btn-primary btn-sm float-right m-2">Post comment</button><br>
+							</form>
+						</div>
+					</div><hr>';
 			} else {
 				echo '<a href="/login">Login</a><hr>';
 			}
@@ -43,7 +51,7 @@ if (Input::exist()) {
 		if (!empty(Input::get('first'))) {
 			echo '</div>
 				<a href="#" class="uviewmorecomments">view more comments</a>
-				<a href="#" class="uviewallcomments">view all comments</a>';
+				<a href="#" class="uviewallcomments float-right">view all comments</a>';
 		}
 	}
 }

@@ -15,11 +15,12 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 			}
 			if (!empty($row)) {
 					echo '<div class="container">
-						<div class="row justify-content-center">
-							<div class="col-sm-8 offset-sm-2">
-								<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
-									<b>'.$row['b_name'].'</b></a><br>
-										<small class="text-muted"><b>'.Validate::formatDate($row['b_postdate']).'</b></small><br><br>
+							<div class="row">
+							 <div class="col-sm-2"></div>
+							  <div class="col-sm-8 p-5">
+							   <div class="card"><div class="card-header searchcontainer searchlink"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
+									<p class="m-0">'.$row['b_name'].'</p></a>
+										<small class="text-muted"><b>'.Validate::formatDate($row['b_postdate']).'</b></small></div><div class="card-body">
 										<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['b_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {
@@ -41,6 +42,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 										</div>
 								</div>
 							</div>
+							</div>
 							<div class="col-sm-2"></div>
 						</div>
 					</div>
@@ -57,11 +59,12 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 			}
 			if (!empty($row)) {
 					echo '<div class="container">
-						<div class="row justify-content-center">
-							<div class="col-sm-8 offset-sm-2">
-								<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
-									<b>'.$row['b_name'].'</b></a><br>
-										<small class="text-muted"><b>'.Validate::formatDate($row['bw_postdate']).'</b></small><br><br>
+						   <div class="row">
+						    <div class="col-sm-2"></div>
+							 <div class="col-sm-8 p-5">
+								<div class="card"><div class="card-header searchcontainer searchlink"><a href="/business/'.$row['b_username'].'"><img class="imgsmall rounded-circle" src="/business_profiles/'.$row['b_profile'].'">
+									<p class="m-0">'.$row['b_name'].'</p></a>
+									<small class="text-muted"><b>'.Validate::formatDate($row['bw_postdate']).'</b></small></div><div class="card-body">
 										<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['bw_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {
@@ -82,6 +85,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 
 										</div>
 								</div>
+							</div>
 							</div>
 							<div class="col-sm-2"></div>
 						</div>

@@ -39,21 +39,28 @@
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="/contact.html">Contact Us</a>
+<a class="nav-link" href="/users">Users</a>
 </li>
 
 <li class="nav-item">
-<form action="/search" class="form-inline my-2 my-lg-0" method="get">
-<div class="input-group">
-<input class="form-control" name="q" type="search" placeholder="Search" aria-label="Search">
-<div class="input-group-append">
-<button class="btn btn-outline-light my-2 my-sm-0" type="submit">
-<span class="fas fa-search"></span>
-</button>
-</div>
-</div>
-</form>
+<a class="nav-link" href="/businesses">Businesses</a>
 </li>
+
+</ul>
+
+<ul class="navbar-nav d-flex justify-content-center">
+	<li class="nav-item">
+		<form action="/search" class="form-inline my-lg-0" method="get">
+			<div class="input-group px-5 mx-5">
+				<input class="form-control" name="q" type="search" placeholder="Search" aria-label="Search" style="width:250px">
+				<div class="input-group-append">
+					<button class="btn btn-outline-light my-2 my-sm-0" type="submit">
+						<span class="fas fa-search"></span>
+					</button>
+				</div>
+			</div>
+		</form>
+	</li>
 </ul>
 <ul class="navbar-nav">
 <?php
@@ -63,7 +70,7 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 <a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 <i class="fas fa-bell"></i><sup><span class="badge badge-pill badge-danger notif-count"></span></sup>
 </a>
-<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif">See more</a></div>
+<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:380px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
 </li>
 <?php
 } elseif (Session::exist('admin_sess_id')) {

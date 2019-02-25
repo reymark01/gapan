@@ -9,6 +9,8 @@ if (Input::exist()) {
   if (!empty(Input::get('accept'))) {
     $sql = "UPDATE store_post SET b_postdate = NOW(), b_postverified = 1 WHERE id = :id";
     DB::query($sql, [], true, ['id' => Input::get('id')]);
+    $sql2 = "INSERT INTO store_notification (store_id, b_notif_type, b_linkto, b_link_id) VALUES (:storeid, :type, :linkto, :linkid)";
+    DB::query($sql2, ['type' => 'postaccept', 'linkto' => 'post'], true, ['storeid' => Input::get('storeid'), 'linkid' => Input::get('id')]);
   } elseif (!empty(Input::get('reject'))) {
     $sql = "DELETE FROM store_post WHERE id = :id";
     DB::query($sql, [], true, ['id' => Input::get('id')]);
@@ -110,6 +112,7 @@ $results =  DB::query("SELECT * FROM store_post WHERE b_postverified = 0");
   <div class="card-body">
     <form action="" method="post">
       <input type="hidden" name="id" value="<?=$row['id']?>">
+      <input type="hidden" name="storeid" value="<?=$row['store_id']?>">
       <a href="/business/<?=$result['b_username']?>"><img style="height: 50px;
   width: 50px;" src="/business_profiles/<?=$result['b_profile']?>"><b><?=$result['b_name'];?></b></a>
       <br>

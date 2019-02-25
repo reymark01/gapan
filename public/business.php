@@ -734,6 +734,11 @@ $(document).ready(function() {
       	$el.height(this.scrollHeight - offset);
       	}
      });
+	$('body').on('click', '.ed-opts-open', function(e) {
+		e.preventDefault();
+		var parent = $(this).parent();
+		parent.find('.ed-options').toggleClass('active');
+	});
 	$('body').on("click", ".wcomment", function(e) {
 		e.preventDefault();
 		var container = $(this).parent().parent().parent();
@@ -1272,7 +1277,7 @@ $(document).ready(function() {
 		var bpost = div.find('.b-post');
 		var bposttext = div.find('.b-post').html();
 		bpost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text">'+bposttext+'</textarea>');
-		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
+		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel">Cancel</button></form>');
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');
 

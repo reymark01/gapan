@@ -23,7 +23,7 @@ if (!empty(Input::get('q'))) {
 			  </li>
 			</ul>
 		</div><br>';
-	echo '<div class="container" id="searchresult">';
+	echo '<div class="container" id="searchresult" style="min-height: 350px;">';
 		$sql = "SELECT * FROM gapan_post WHERE MATCH (post) AGAINST (:q) ORDER BY id DESC LIMIT :lim";
 		$result = DB::query($sql, ['q' => Input::get('q')], true, ['lim' => 10]);
 		$sql2 = "SELECT * FROM gapan_post WHERE post LIKE :q ORDER BY id DESC LIMIT :lim";
@@ -55,6 +55,7 @@ if (!empty(Input::get('q'))) {
 <script src="js/main.js"></script>
 <script>
 $(document).ready(function() {
+
 	var u_sess_id = "<?php echo Session::exist('u_sess_id') ? Session::get('u_sess_id') : '' ?>";
 	var b_sess_id = "<?php echo Session::exist('b_sess_id') ? Session::get('b_sess_id') : '' ?>";
 	if (u_sess_id != '') {
@@ -90,7 +91,11 @@ $(document).ready(function() {
 				announcementTab: true
 			},
 			success: function(data) {
-				$('#searchresult').html(data);
+				if (data != '') {
+					$('#searchresult').html(data);
+				} else {
+					$('#searchresult').html('No results found!');	
+				}
 			}
 		});
 	});
@@ -104,7 +109,11 @@ $(document).ready(function() {
 				usersTab: true
 			},
 			success: function(data) {
-				$('#searchresult').html(data);
+				if (data != '') {
+					$('#searchresult').html(data);
+				} else {
+					$('#searchresult').html('No results found!');	
+				}
 			}
 		});
 	});
@@ -118,7 +127,11 @@ $(document).ready(function() {
 				eventsTab: true
 			},
 			success: function(data) {
-				$('#searchresult').html(data);
+				if (data != '') {
+					$('#searchresult').html(data);
+				} else {
+					$('#searchresult').html('No results found!');	
+				}
 			}
 		});
 	});
@@ -132,7 +145,11 @@ $(document).ready(function() {
 				newsTab: true
 			},
 			success: function(data) {
-				$('#searchresult').html(data);
+				if (data != '') {
+					$('#searchresult').html(data);
+				} else {
+					$('#searchresult').html('No results found!');	
+				}
 			}
 		});
 	});
@@ -146,10 +163,22 @@ $(document).ready(function() {
 				businessTab: true
 			},
 			success: function(data) {
-				$('#searchresult').html(data);
+				if (data != '') {
+					$('#searchresult').html(data);
+				} else {
+					$('#searchresult').html('No results found!');	
+				}
 			}
 		});
 	});
+
+
+
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		$(e.target).addClass("bg-lightblue")
+		$(e.relatedTarget).removeClass("bg-lightblue");	
+})
+
 });
 </script>
 <?php

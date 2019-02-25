@@ -9,6 +9,8 @@ if (Input::exist()) {
   if (!empty(Input::get('accept'))) {
     $sql = "UPDATE user_post SET u_postdate = NOW(), u_postverified = 1 WHERE id = :id";
     DB::query($sql, [], true, ['id' => Input::get('id')]);
+    $sql2 = "INSERT INTO user_notification (user_id, notif_type, linkto, link_id) VALUES (:userid, :type, :linkto, :linkid)";
+    DB::query($sql2, ['type' => 'postaccept', 'linkto' => 'post'], true, ['userid' => Input::get('userid'), 'linkid' => Input::get('id')]);
   } elseif (!empty(Input::get('reject'))) {
     $sql = "DELETE FROM user_post WHERE id = :id";
     DB::query($sql, [], true, ['id' => Input::get('id')]);
@@ -115,6 +117,7 @@ $results =  DB::query("SELECT * FROM user_post WHERE u_postverified = 0");
   <div class="card-body">
     <form action="" method="post">
       <input type="hidden" name="id" value="<?=$row['id']?>">
+      <input type="hidden" name="userid" value="<?=$row['user_id']?>">
       <a href="/user/<?=$result['username']?>"><img class="imgsmall" src="/user_profiles/<?=$result['profile']?>"><b><?=$result['fname'].' '.$result['lname'];?></b></a>
       <br>
       <small class="text-muted"><?=Validate::formatDate($row['u_postdate'])?></small>

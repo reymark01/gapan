@@ -121,17 +121,21 @@ if (Session::exist('postSuc')) {
 }
 ?>
 <br>
-<div class="container"><div class="row"><div class="col-sm-4"></div><div class="col-sm-5">
-<form action="" class="form-group" method="post" enctype="multipart/form-data">
-	<label>Title</label>
-	<input class="form-control" type="text" name="title" placeholder="Title"><br>
-	<label>Description</label><textarea class="form-control" name="post" placeholder="Description"></textarea><br>
-	<label>Price</label><br>
-	<input class="form-control" type="text" name="price" placeholder="Price"><br>
-	<input type="file" name="file[]" multiple>
-	<input type="hidden" name="token" value="<?php echo Token::generate('uPostToken'); ?>">
-	<button type="submit" class="btn btn-primary btn-sm" style="float: right;">Submit Post</button>
-</form>
+<div class="container"><div class="row"><div class="col-sm-3"></div><div class="col-sm-6">
+<div class="card">
+	<div class="card-body">
+		<form action="" class="form-group" method="post" enctype="multipart/form-data">
+			<label>Title</label>
+			<input class="form-control" type="text" name="title" placeholder="Title"><br>
+			<label>Description</label><textarea class="form-control" name="post" placeholder="Description"></textarea><br>
+			<label>Price</label><br>
+			<input class="form-control" type="text" name="price" placeholder="Price"><br>
+			<input type="file" name="file[]" multiple>
+			<input type="hidden" name="token" value="<?php echo Token::generate('uPostToken'); ?>">
+			<button type="submit" class="btn btn-primary btn-sm" style="float: right;">Submit Post</button>
+		</form>
+	</div>
+</div>
 </div></div></div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

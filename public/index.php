@@ -40,9 +40,6 @@ if (Session::exist('noUserReg')) {
 		<div class="carousel-item">
 			<img src="image/5.jpg" class="carousel-img" alt="Fifth slide">
 		</div>
-		<div class="carousel-item">
-			<img src="image/6.jpg" class="carousel-img" alt="Sixth slide">
-		</div>
 	</div>
 	<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 		<span class="carousel-control-prev-icon" aria-hidden="true"></span>

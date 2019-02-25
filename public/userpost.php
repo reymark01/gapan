@@ -18,10 +18,10 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 				echo '<div class="container">
 					<div class="row">
 					<div class="col-sm-2"></div>
-					<div class="col-sm-8">
-					<div class="border border-dark shadow p-3 mb-5 bg-white rounded"><a href="/user/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
-					<b>'.$row['fname'].' '.$row['lname'].'</b></a><br>
-					<small class="text-muted"><b>'.Validate::formatDate($row['u_postdate']).'</b></small><br><br>
+					<div class="col-sm-8 p-5">
+					<div class="card"><div class="card-header searchcontainer searchlink"><a href="/user/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
+					<p class="m-0">'.$row['fname'].' '.$row['lname'].'</p></a>
+					<small class="text-muted"><b>'.Validate::formatDate($row['u_postdate']).'</b></small></div><div class="card-body">
 					<b><h3>'.$row['u_title'].'</h3></b><br>
 					<div>₱'.$row['u_postprice'].'.00</div><br>
 					<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_post'])).'</div>';
@@ -40,7 +40,9 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					<input type="hidden" class="upostid" value="<?=$row['postid']?>">
 					<input type="hidden" class="uc_count" value="">
 					<hr><a href="#" class="ucomment">Comment</a>
-					<div class="ucomments"></div></div></div>
+					<div class="ucomments">
+						
+					</div></div></div></div>
 					<div class="col-sm-2"></div></div></div>
 <?php
 			} else {

@@ -6,15 +6,23 @@ if (Input::exist()) {
 	if (!empty(Input::get('postid'))) {
 		if (!empty(Input::get('first'))) {
 			if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
-				echo '<div class="container">
-						<form class="form-group comment-form">
-						<textarea class="form-control commentarea" name="comment"></textarea>
-						<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
-						</form>
-						</div><hr>
-					</div>';
+				echo '<div class="container row">
+						<div class="col-sm-2">';
+						if (Session::exist('u_sess_id')) {
+							echo '<img class="imgsmall rounded-circle" src="/user_profiles/'.Session::get('u_sess_profile').'">';
+						} elseif (Session::exist('b_sess_id')) {
+							echo '<img class="imgsmall rounded-circle" src="/business_profiles/'.Session::get('b_sess_profile').'">';
+						}
+				echo '</div>
+						<div class="col-sm-10">
+							<form class="form-group comment-form">
+							<textarea class="form-control commentarea" name="comment"></textarea>
+							<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
+							</form>
+						</div>
+					  </div><hr>';
 			} else {
-				echo '<a href="../login">Login</a><hr>';
+				echo '<a href="/login">Login</a><hr>';
 			}
 			$sql = "SELECT  store_post_comments.id, store_post_comments.b_comment, store_post_comments.b_commentdate, stores.b_name, stores.b_profile, stores.b_username, users.fname, users.lname, users.username, users.profile FROM ((store_post_comments LEFT JOIN stores ON store_post_comments.store_id = stores.id) LEFT JOIN users ON store_post_comments.user_id = users.id) WHERE store_post_comments.store_post_id = :postid ORDER BY store_post_comments.id DESC LIMIT 0, 2";
 			$results = DB::query($sql, [], true, ['postid' => Input::get('postid')]);
@@ -44,7 +52,7 @@ if (Input::exist()) {
 		if (!empty(Input::get('first'))) {
 			echo '</div>
 				<a href="#" class="viewmorecomments">view more comments</a>
-				<a href="#" class="viewallcomments">view all comments</a>';
+				<a href="#" class="viewallcomments float-right">view all comments</a>';
 		}
 	} else {
 		Redirect::to('./');

@@ -48,9 +48,13 @@
 					</li>
 
 					<li class="nav-item">
-						<a class="nav-link" href="/contact.html">Contact Us</a>
+						<a class="nav-link" href="/users">Users</a>
 					</li>
 
+					<li class="nav-item">
+						<a class="nav-link" href="/businesses">Businesses</a>
+					</li>
+					
 					<li class="nav-item">
 						<form action="/search" class="form-inline my-2 my-lg-0" method="get">
 							<div class="input-group">
