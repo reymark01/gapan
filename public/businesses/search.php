@@ -1,7 +1,24 @@
 <?php
-require_once '../app/core/init.php';
-require_once 'layout/header.php';
+require_once '../../app/core/newinit.php';
+require_once '../layout/header.php';
 ?>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-4 p-4">
+			<form action="/businesses/search" class="form-inline my-lg-0" method="get">
+				<div class="input-group px-5 mx-5">
+					<input class="form-control" name="q" type="search" placeholder="Search User" aria-label="Search" style="width:250px">
+					<div class="input-group-append">
+						<button class="btn btn-primary" type="submit">
+							<span class="fas fa-search"></span>
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 <div class="container">
 	<div class="row p-2" id="businessescontainer">
 		
@@ -12,7 +29,7 @@ require_once 'layout/header.php';
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
 <script src="/js/main.js"></script>
 <script>
-function renderUsers(element,data) {
+function renderBusinesses(element,data) {
 	data.map((item,i)=>{
 		let col = $("<div class='col-sm-4 p-2'>");
 		let card = $("<div class='card' style='border-radius:0;'>");
@@ -43,17 +60,19 @@ function renderUsers(element,data) {
 $(document).ready(function() {
 	var start = 12;
 	var limit = 12;
+	var q = '<?php echo Input::get('q') ?>'
 	$.ajax({
-		url: '/ajax/showallbusinesses.php',
+		url: '/ajax/searchbusiness.php',
 		method: 'post',
 		data: {
+			q: q,
 			start: 0,
 			limit: limit
 		},
 		dataType: 'json',
 		success: function(data) {
 			if (data != '') {
-				renderUsers($('#businessescontainer'),data);
+				renderBusinesses($('#businessescontainer'),data);
 				start += limit;
 			}
 		}
@@ -95,16 +114,17 @@ $(document).ready(function() {
 	}
 	var getBusinesses = function() {
 		$.ajax({
-			url: '/ajax/showallbusinesses.php',
+			url: '/ajax/searchbusiness.php',
 			method: 'post',
 			data: {
+				q: q,
 				start: start,
 				limit: limit
 			},
 			dataType: 'json',
 			success: function(data) {
 				if (data != '') {
-					renderUsers($('#businessescontainer'),data);
+					renderBusinesses($('#businessescontainer'),data);
 					start += limit;
 				}
 			}
@@ -117,3 +137,5 @@ $(document).ready(function() {
 	});
 });
 </script>
+<?php
+require_once '../layout/footer.php';

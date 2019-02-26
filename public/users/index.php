@@ -1,7 +1,24 @@
 <?php
-require_once '../app/core/init.php';
-require_once 'layout/header.php';
+require_once '../../app/core/newinit.php';
+require_once '../layout/header.php';
 ?>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-4 p-4">
+			<form action="/users/search" class="form-inline my-lg-0" method="get">
+				<div class="input-group px-5 mx-5">
+					<input class="form-control" name="q" type="search" placeholder="Search User" aria-label="Search" style="width:250px">
+					<div class="input-group-append">
+						<button class="btn btn-primary" type="submit">
+							<span class="fas fa-search"></span>
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 <div class="container">
 	<div class="row p-2" id="userscontainer">
 		
@@ -109,3 +126,5 @@ $(document).ready(function() {
 	});
 });
 </script>
+<?php
+require_once '../layout/footer.php';
