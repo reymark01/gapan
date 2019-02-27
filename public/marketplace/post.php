@@ -9,7 +9,7 @@ if (Input::exist()) {
 		$validate = new Validate();
 		$validation = $validate->check($_POST, array(
 			'title' => array(
-				'required' => true,
+				'required' => true
 			),
 			'price' => array(
 				'required' => true,

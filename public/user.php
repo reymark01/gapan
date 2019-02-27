@@ -1,6 +1,58 @@
 <?php
 require_once '../app/core/init.php';
 
+
+if (Input::exist()) {
+	if (isset($_FILES['file']['size']) && !empty($_FILES['file']['size'])) {
+		$validate = new Validate();
+		$validation = $validate->check($_POST, array(
+			'file' => array(
+				'ftype' => array('jpg', 'jpeg', 'png')
+			)
+		));
+		if($validation->passed()) {
+			$key = Token::uniqKey('users', 'profile');
+			$tmp_name = $_FILES['file']['tmp_name'];
+			$userprofiles = 'user_profiles/'.$key;
+			if (Session::get('u_sess_profile') != 'default') {
+				$filename = 'user_profiles/'.Session::get('u_sess_profile');
+				unlink($filename);
+			}
+			$sql = "UPDATE users SET profile = :profile WHERE id = :id";
+			if (DB::query($sql, ['profile' => $key], true, ['id' => Session::get('u_sess_id')])) {
+				move_uploaded_file($tmp_name, $userprofiles);
+			}
+			Session::delete('u_sess_profile');
+			Session::create('u_sess_profile', $key);
+		}
+	}
+}
+function changeProfileModal() {
+?>
+	<div class="modal fade" id="changeProfileModal" tabindex="-1" role="dialog" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="changeProfileModalLabel">Change Profile</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<form action="" method="post" enctype="multipart/form-data">
+	        	<input type="file" name="file">
+	      </div>
+	      <div class="modal-footer">
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        	<button type="submit" class="btn btn-primary" name="save" value="save">Save changes</button>
+	    	</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<?php
+}
+
 function renderReportModal($resultid, $fname, $lname){
 ?>
 	<div class="modal fade" id="reportUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -57,6 +109,12 @@ if (!empty(Input::get('username'))) {
 										</div>
 									</div><!--username-dt end-->
 									<div class="user-specs">
+<?php
+									if (Session::exist('u_sess_id') && $result['id'] == Session::get('u_sess_id')) {
+										echo '<a href="#" id="changeprofile">Change Profile</a>';
+										changeProfileModal();
+									}
+?>
 										<h3><?=$result["fname"]." ".$result['lname']?></h3>
 										<span>@<?=$result['username']?></span>
 									</div>
@@ -518,6 +576,10 @@ $(document).ready(function() {
 				}
 			});
 		}
+	});
+	$('body').on('click', '#changeprofile', function(e) {
+		e.preventDefault();
+		$('#changeProfileModal').modal('show');
 	});
 	$('body').on('click', '#user-report', function(e) {
 		e.preventDefault();

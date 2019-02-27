@@ -51,7 +51,7 @@ if (Session::exist('noUserReg')) {
 	</a>
 </div>
 <?php
-	echo '<br><br><div class="separator">Announcements</div><br><br>';
+	echo '<br><br><div class="separator" style="font-size: 35px;">ANNOUNCEMENTS</div><br><br>';
 	$sql2 = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT 3";
 	$result2 = DB::query($sql2);
 	echo '<div class="container"><div class="row">';

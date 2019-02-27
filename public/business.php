@@ -32,6 +32,32 @@ if (Input::exist()) {
 				}
 			}
 		}
+	} elseif (!empty(Input::get('changeprofile'))) {
+		if (isset($_FILES['file']['size']) && !empty($_FILES['file']['size'])) {
+			$validate = new Validate();
+			$validation = $validate->check($_POST, array(
+				'file' => array(
+					'ftype' => array('jpg', 'jpeg', 'png')
+				)
+			));
+			if($validation->passed()) {
+				$key = Token::uniqKey('stores', 'profile');
+				$tmp_name = $_FILES['file']['tmp_name'];
+				$businessprofiles = 'business_profiles/'.$key;
+				if (Session::get('b_sess_profile') != 'default') {
+					$filename = 'business_profiles/'.Session::get('b_sess_profile');
+					unlink($filename);
+				}
+				$sql = "UPDATE stores SET b_profile = :profile WHERE id = :id";
+				if (DB::query($sql, ['profile' => $key], true, ['id' => Session::get('b_sess_id')])) {
+					move_uploaded_file($tmp_name, $businessprofiles);
+				}
+				Session::delete('b_sess_profile');
+				Session::create('b_sess_profile', $key);
+			} else {
+				Session::flash('businessFail', 'Failed!');
+			}
+		}
 	} else {
 		$options = array(
 	    	'cluster' => 'ap1',
@@ -103,6 +129,31 @@ $errors = [];
 $result=  [];
 $posts = [];
 
+function changeProfileModal() {
+?>
+	<div class="modal fade" id="changeProfileModal" tabindex="-1" role="dialog" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="changeProfileModalLabel">Change Profile</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<form action="" method="post" enctype="multipart/form-data">
+	        	<input type="file" name="file">
+	      </div>
+	      <div class="modal-footer">
+	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        	<button type="submit" class="btn btn-primary" name="changeprofile" value="changeprofile">Save changes</button>
+	    	</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<?php
+}
 
 function ratings($b_rate,$b_review){
 	for ($i=0; $i<5; $i++) {
@@ -203,6 +254,9 @@ function renderReportModal($resultid, $bname){
 if (Session::exist('bPostFail')) {
 	array_push($errors,'<div class="alert alert-danger" role="alert">'.Session::flash('bPostFail').'</div>');
 }
+if (Session::exist('businessFail')) {
+	echo '<div class="alert alert-danger" role="alert">'.Session::flash('businessFail').'</div>';
+}
 if (!empty(Input::get('username'))) {
 	$sql = "SELECT * FROM stores WHERE b_account_verified = 1 AND b_username = :username";
 	$result = DB::query($sql, ['username' => Input::get('username')])->fetch();
@@ -232,6 +286,12 @@ if (!empty(Input::get('username'))) {
 										</div>
 									</div><!--username-dt end-->
 									<div class="user-specs">
+<?php
+									if (Session::exist('b_sess_id') && $result['id'] == Session::get('b_sess_id')) {
+										echo '<a href="#" id="changeprofile">Change Profile</a>';
+										changeProfileModal();
+									}
+?>
 										<h3><?=$result['b_name']?></h3>
 <?php
 										if (!empty($brate['brate'])) {
@@ -663,10 +723,6 @@ $(document).ready(function() {
 			}
 		});
 	}
-	/*$(window).scroll(function() {
-			if ($(window).scrollTop() == $(document).height() - $(window).height())
-				getPosts();
-	});*/
 	$('body').on('click', '#seemore', function(e) {
 		e.preventDefault();
 		getPosts();
@@ -690,6 +746,10 @@ $(document).ready(function() {
 				}
 			}
 		});
+	});
+	$('body').on('click', '#changeprofile', function(e) {
+		e.preventDefault();
+		$('#changeProfileModal').modal('show');
 	});
 	$('.post-jb').on('click', function(e) {
 		e.preventDefault();
