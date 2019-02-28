@@ -620,9 +620,9 @@ $(document).ready(function() {
 		var upostprice = div.find('.u-postprice');
 		var upostpriceval = div.find('.u-postprice').html();
 		//bpostprice = replaceWith('<input type="text" value="'+bpostpriceval+'">');
-		uposttitle.replaceWith('<input class="edit-post-title" id="'+postTitleID+'" form="edit-form" type="text" value="'+uposttitleval+'">');
-		upostprice.replaceWith('<input class="edit-post-price" id="'+postpriceID+'" form="edit-form" type="text" value="'+upostpriceval+'">');
-		upost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text">'+uposttext+'</textarea>');
+		uposttitle.replaceWith('<input class="edit-post-title form-control" id="'+postTitleID+'" form="edit-form" type="text" value="'+uposttitleval+'">');
+		upostprice.replaceWith('<input class="edit-post-price form-control" id="'+postpriceID+'" form="edit-form" type="text" value="'+upostpriceval+'">');
+		upost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text form-control">'+uposttext+'</textarea>');
 		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');

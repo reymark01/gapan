@@ -22,8 +22,8 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 					<div class="card"><div class="card-header searchcontainer searchlink"><a href="/user/'.$row['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row['profile'].'">
 					<p class="m-0">'.$row['fname'].' '.$row['lname'].'</p></a>
 					<small class="text-muted"><b>'.Validate::formatDate($row['u_postdate']).'</b></small></div><div class="card-body">
-					<b><h3>'.$row['u_title'].'</h3></b><br>
-					<div>₱'.$row['u_postprice'].'.00</div><br>
+					<div><b>'.$row['u_title'].'</b></div><br>
+					<div><span class="badge badge-pill badge-success" style="background-color:#53d690;color:black;font-size:15px;">Price</span>₱'.$row['u_postprice'].'.00</div><br>
 					<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['u_post'])).'</div>';
 					if (!empty($photos)) {
 						if (count($photos) == 1) {

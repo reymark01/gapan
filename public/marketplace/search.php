@@ -25,6 +25,14 @@ if (!Input::exist('get') || empty(Input::get('q'))) {
 		</div>
 	</div>
 </div>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4">
+			Search results for <b>"<?=Input::get('q')?>"</b>
+		</div>
+	</div>
+</div>
 <br>
 <div class="container">
 	<input id="mpSearchTab" type="hidden" value="user">
@@ -60,8 +68,8 @@ function renderCards(element,data,html = false){
 		let image = $('<img class="imgsmall rounded-circle m-2" src="'+item.profile_img+'"/>');
 		let name = $("<p class='m-0'>"+item.name+"</p>");
 		let postdate = $('<small class="m-0 text-muted">'+item.postdate+'</small>');
-		let title = $("<div> Title: "+item.title+"</div>");
-		let price = $("<div> Price: "+item.price+"</div>");
+		let title = $("<div><b>"+item.title+"</b></div><br>");
+		let price = $('<div><span class="badge badge-pill badge-success" style="background-color:#53d690;color:black;font-size:15px;">Price</span> ₱'+item.price+'</div><br>');
 		let postImage = $("<img class='img-thumbnail' src='"+item.image+"' style='width: 250px; height: 250px;'>");
 		cardHeader.append(image);
 		cardHeader.append(name);

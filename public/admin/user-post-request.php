@@ -96,10 +96,6 @@ if (Input::exist()) {
       <div class="container-fluid">
           <div class="row">
 <?php
-	/*$count = DB::query("SELECT count(*) FROM userpost WHERE post_verified = 0")->fetch();
-	if ($count['count(*)'] >= 1) {
-
-	}*/
 $results =  DB::query("SELECT * FROM user_post WHERE u_postverified = 0");
   while ($row = $results->fetch()) {
 	  $sql = "SELECT fname, lname, username, profile FROM users WHERE id = :id";
@@ -123,6 +119,8 @@ $results =  DB::query("SELECT * FROM user_post WHERE u_postverified = 0");
       <small class="text-muted"><?=Validate::formatDate($row['u_postdate'])?></small>
       <br>
       <br>
+      <?=$row['u_title']?><br>
+      <?=$row['u_postprice']?><br>
       <?=$row['u_post']?><br>
       <?php if (empty($photos)) {	 
       echo 'No Image<br>';
