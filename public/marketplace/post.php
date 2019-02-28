@@ -19,7 +19,7 @@ if (Input::exist()) {
 		if (Session::exist('u_sess_id')) {
 			if ($validation->passed()) {
 				if ($_FILES['file']['size'][0] > 0) {
-					$files = Validate::arrageArray($_FILES['file']);
+					$files = Validate::arrangeArray($_FILES['file']);
 					for ($i=0; $i<count($files); $i++) {
 						if ($files[$i]['error']) {
 							Session::flash('postFail', 'File/s upload error');
@@ -39,13 +39,12 @@ if (Input::exist()) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM user_post WHERE user_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('u_sess_id'), 'lim' => 1])->fetch();
-						$files = Validate::arrageArray($_FILES['file']);
-						for ($i=0; $i<count($files); $i++) {
+						$files = Validate::arrangeArray($_FILES['file']);
+						for ($i=0; $i < count($files); $i++) { 
 							$key = Token::uniqKey('user_post_photos', 'u_postphoto');
-							if (move_uploaded_file($files[$i]['tmp_name'], '../user_photos/'.$key)) {
-								$sql3 = "INSERT INTO user_post_photos (user_post_id, u_postphoto) VALUES (:postid, :key)";
-								DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
-							}
+							move_uploaded_file($files[$i]['tmp_name'], '../user_photos/'.$key);
+							$sql3 = "INSERT INTO user_post_photos (user_post_id, u_postphoto) VALUES (:postid, :key)";
+							DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
 						}
 					}
 					Session::flash('postSuc', "Success! Wait for Admin's approval");
@@ -67,7 +66,7 @@ if (Input::exist()) {
 		} elseif (Session::exist('b_sess_id')) {
 			if ($validation->passed()) {
 				if ($_FILES['file']['size'][0] > 0) {
-					$files = Validate::arrageArray($_FILES['file']);
+					$files = Validate::arrangeArray($_FILES['file']);
 					for ($i=0; $i<count($files); $i++) {
 						if ($files[$i]['error']) {
 							Session::flash('postFail', 'File/s upload error');
@@ -87,13 +86,12 @@ if (Input::exist()) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();
-						$files = Validate::arrageArray($_FILES['file']);
-						for ($i=0; $i<count($files); $i++) {
+						$files = Validate::arrangeArray($_FILES['file']);
+						for ($i=0; $i < count($files); $i++) { 
 							$key = Token::uniqKey('store_post_photos', 'b_postphoto');
-							if (move_uploaded_file($files[$i]['tmp_name'], '../business_photos/'.$key)) {
-								$sql3 = "INSERT INTO store_post_photos (store_post_id, b_postphoto) VALUES (:postid, :key)";
-								DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
-							}
+							move_uploaded_file($files[$i]['tmp_name'], '../business_photos/'.$key);
+							$sql3 = "INSERT INTO store_post_photos (store_post_id, b_postphoto) VALUES (:postid, :key)";
+							DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
 						}
 					}
 					Session::flash('postSuc', "Success! Wait for Admin's approval");

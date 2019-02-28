@@ -91,12 +91,11 @@ if (Input::exist()) {
 					$sql2 = "SELECT id FROM store_wall_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 					$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();
 					$files = Validate::arrageArray($_FILES['file']);
-					for ($i=0; $i<count($files); $i++) {
+					for ($i=0; $i < count($files); $i++) {
 						$key = Token::uniqKey('store_wall_post_photos', 'bw_postphoto');
-						if (move_uploaded_file($files[$i]['tmp_name'], 'business_wall_photos/'.$key)) {
-							$sql3 = "INSERT INTO store_wall_post_photos (store_wall_post_id, bw_postphoto) VALUES (:postid, :key)";
-							DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
-						}
+						move_uploaded_file($files[$i]['tmp_name'], 'business_wall_photos/'.$key);
+						$sql3 = "INSERT INTO store_wall_post_photos (store_wall_post_id, bw_postphoto) VALUES (:postid, :key)";
+						DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
 					}
 				}
 			    /*$newpost = "SELECT store_wall_post.id as postid, b_name, b_username, b_profile, bw_post, bw_postdate FROM stores, store_wall_post WHERE stores.id = store_wall_post.store_id AND store_id = :id ORDER BY store_wall_post.id DESC LIMIT 1";

@@ -127,7 +127,7 @@ class Validate {
 	public function passed() {
 		return $this->_passed;
 	}
-	public static function arrageArray($file) {
+	public static function arrangeArray($file) {
 		$file_array = array();
 		$file_count = count($file['name']);
 		$file_keys = array_keys($file);
