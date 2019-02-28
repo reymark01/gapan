@@ -50,13 +50,13 @@ function renderUsers(element,data) {
 	});
 }
 $(document).ready(function() {
-	var start = 12;
+	var start = 0;
 	var limit = 12;
 	$.ajax({
 		url: '/ajax/showallusers.php',
 		method: 'post',
 		data: {
-			start: 0,
+			start: start,
 			limit: limit
 		},
 		dataType: 'json',
@@ -122,7 +122,6 @@ $(document).ready(function() {
 	$(window).scroll(function() {
 		if ($(window).scrollTop() == $(document).height() - $(window).height()) {
 			getUsers();
-			alert(start);
 		}
 	});
 });
