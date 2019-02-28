@@ -26,9 +26,8 @@ if (Input::exist()) {
 				$pusher->trigger('addUserCommentChannel', 'addUserCommentEvent', array('output' => $out, 'uid' => Session::get('u_sess_id'), 'postid' => $row['pid']));
 				if (Session::get('u_sess_id') != $userid['id']) {
 					$sql2 = "INSERT INTO user_notification (user_id, notif_from, from_id, notif_type, link, linkto, link_id) VALUES (:user_id, :notif_from, :from_id, :notif_type, :link, :linkto, :link_id)";
-					if (DB::query($sql2, ['notif_from' => 'user', 'notif_type' => 'comment', 'link' => 'post', 'linkto' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('u_sess_id'), 'link_id' => $row['pid']])) {
+					DB::query($sql2, ['notif_from' => 'user', 'notif_type' => 'comment', 'link' => 'post', 'linkto' => 'post'], true, ['user_id' => $userid['id'], 'from_id' => Session::get('u_sess_id'), 'link_id' => $row['pid']]);
 					 	$pusher->trigger('uAddNotifyChannel', 'uAddNotifyEvent', ['u_id' => $userid['id'], 'count' => 1]);
-					}
 				}		
 		} elseif (Session::exist('b_sess_id')) {
 			$newcomment = "SELECT user_post_comments.id, user_post_comments.user_post_id as pid,user_post_comments.u_comment, user_post_comments.u_commentdate, stores.b_name, stores.b_profile, stores.b_username FROM (user_post_comments LEFT JOIN stores ON user_post_comments.store_id = stores.id) WHERE user_post_comments.user_post_id = :postid AND user_post_comments.store_id = :bid ORDER BY user_post_comments.id DESC LIMIT :newlim";
