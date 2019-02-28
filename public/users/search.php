@@ -50,7 +50,7 @@ function renderUsers(element,data) {
 	});
 }
 $(document).ready(function() {
-	var start = 12;
+	var start = 0;
 	var limit = 12;
 	var q = '<?php echo Input::get('q') ?>';
 	$.ajax({
@@ -58,7 +58,7 @@ $(document).ready(function() {
 		method: 'post',
 		data: {
 			q: q,
-			start: 0,
+			start: start,
 			limit: limit
 		},
 		dataType: 'json',

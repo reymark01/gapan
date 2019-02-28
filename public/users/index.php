@@ -34,7 +34,7 @@ function renderUsers(element,data) {
 		let col = $("<div class='col-sm-4 p-2'>");
 		let card = $("<div class='card' style='border-radius:0;'>");
 		let cardHeader = $('<a href="'+item.link+'" class="card-header searchcontainer searchlink"></a>');
-		let profile = $('<img class="imgsmall" src="'+item.profile+'">');
+		let profile = $('<img class="rounded-circle" style="height:100px; width:100px;" src="'+item.profile+'">');
 		let name = $('<p class="m-0"><b>'+item.name+'</b></p>');
 		let username = $('<small class="text-muted">@'+item.username+'</small>');
 		let email = $('<hr><h5>E-mail</h5><div>'+item.email+'</div>');

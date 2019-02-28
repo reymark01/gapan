@@ -110,7 +110,7 @@
 								<?php
 								while ($row = $result->fetch()) {
 									?>
-									<a href="#" class="dropdown-item" data-toggle="modal" data-target="#switchAccountModal" data-account="<?=$row['b_name']?>" data-u-username="" data-b-username="<?=$row['b_username']?>"><img class="imgsmall" src="/business_profiles/<?=$row['b_profile']?>"><?=$row['b_name']?></a>
+									<a href="#" class="dropdown-item" data-toggle="modal" data-target="#switchAccountModal" data-account="<?=$row['b_name']?>" data-u-username="" data-b-username="<?=$row['b_username']?>"><img class="imgsmall rounded-circle" src="/business_profiles/<?=$row['b_profile']?>"><?=$row['b_name']?></a>
 									<?php
 								}
 								?>

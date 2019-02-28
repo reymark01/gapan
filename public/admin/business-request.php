@@ -108,7 +108,7 @@ while ($row = $results->fetch()) {
             <div class="card" style="margin: 15px; ">
             <div class="card-body">
 	<form action="" method="post">
-	<img src="/business_profiles/'.$row['b_profile'].'"><br>
+	<img src="/business_profiles/'.$row['b_profile'].'" style="height:200px; width:250px;"><br>
 	Business Name: '.$row['b_name'].'<br>
 	Username: '.$row['b_username'].'<br>
 	Business Type: '.$row['b_type'].'<br>

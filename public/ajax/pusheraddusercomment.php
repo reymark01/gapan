@@ -1,7 +1,6 @@
 <?php
 require_once '../pusher/vendor/autoload.php';
 require_once '../../app/core/newinit.php';
-ini_set('display_errors', 1);
 
 if (Input::exist()) {
 	if (!empty(Input::get('pushcomment'))) {

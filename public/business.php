@@ -72,7 +72,7 @@ if (Input::exist()) {
 		if (Token::check('bPostToken', Input::get('token'))) {
 			$keys = '';
 			if ($_FILES['file']['size'][0] > 0) {
-				$files = Validate::arrageArray($_FILES['file']);
+				$files = Validate::arrangeArray($_FILES['file']);
 				for ($i=0; $i<count($files); $i++) {
 					if ($files[$i]['error']) {
 						Redirect::to('/');
@@ -90,7 +90,7 @@ if (Input::exist()) {
 				if ($_FILES['file']['size'][0] > 0) {
 					$sql2 = "SELECT id FROM store_wall_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 					$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();
-					$files = Validate::arrageArray($_FILES['file']);
+					$files = Validate::arrangeArray($_FILES['file']);
 					for ($i=0; $i < count($files); $i++) {
 						$key = Token::uniqKey('store_wall_post_photos', 'bw_postphoto');
 						move_uploaded_file($files[$i]['tmp_name'], 'business_wall_photos/'.$key);

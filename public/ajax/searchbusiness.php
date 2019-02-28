@@ -3,7 +3,7 @@ require_once '../../app/core/newinit.php';
 
 if (Input::exist() && !empty(Input::get('q'))) {
 	$sql = "SELECT id, b_name, b_username, b_address, b_type, b_contact, b_email, b_profile FROM stores WHERE (MATCH (b_name, b_username) AGAINST (:q) OR b_name LIKE :qq OR b_username LIKE :qq) AND b_account_verified = 1 LIMIT :start, :lim";
-	$result = DB::query($sql2, ['q' => Input::get('q'), 'qq' => Input::get('q').'%'], true, ['start' => Input::get('start'), 'lim' => Input::get('limit')]);
+	$result = DB::query($sql, ['q' => Input::get('q'), 'qq' => Input::get('q').'%'], true, ['start' => Input::get('start'), 'lim' => Input::get('limit')]);
 	$businesses = [];
 	while($row = $result->fetch()) {
 		$sql2 = "SELECT ROUND(AVG(b_rate),2) as b_rate FROM store_rate WHERE store_id = :id";
