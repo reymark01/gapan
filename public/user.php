@@ -105,7 +105,7 @@ if (!empty(Input::get('username'))) {
 								<div class="user-profile">
 									<div class="username-dt">
 										<div class="usr-pic">
-											 <img src="/user_profiles/<?=$result['profile']?>" alt="">
+											 <img src="/user_profiles/<?=$result['profile']?>" style="height: 120px;width: 120px;">
 										</div>
 									</div><!--username-dt end-->
 									<div class="user-specs">

@@ -46,13 +46,17 @@
 <a class="nav-link" href="/businesses">Businesses</a>
 </li>
 
+<li class="nav-item">
+	<a class="nav-link" href="/faq">FAQ</a>
+</li>
+
 </ul>
 
 <ul class="navbar-nav d-flex justify-content-center">
 	<li class="nav-item">
 		<form action="/search" class="form-inline my-lg-0" method="get">
 			<div class="input-group px-5 mx-5">
-				<input class="form-control" name="q" type="search" placeholder="Search" aria-label="Search" style="width:250px">
+				<input class="form-control" name="q" type="search" placeholder="Search" aria-label="Search" style="width:200px">
 				<div class="input-group-append">
 					<button class="btn btn-outline-light my-2 my-sm-0" type="submit">
 						<span class="fas fa-search"></span>

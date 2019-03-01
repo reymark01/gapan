@@ -54,6 +54,10 @@
 					<li class="nav-item">
 						<a class="nav-link" href="/businesses">Businesses</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="nav-link" href="/faq">FAQ</a>
+					</li>
 					
 					<li class="nav-item">
 						<form action="/search" class="form-inline my-2 my-lg-0" method="get">
@@ -69,36 +73,32 @@
 					</li>
 				</ul>
 				<ul class="navbar-nav">
-					<?php
-					if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
-						?>
-						<li class="nav-item dropdown">
-							<a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fas fa-bell"></i><span class="badge badge-pill badge-danger notif-count"></span>
-							</a>
-							<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; overflow-y: scroll; overflow-x: hidden;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif">See more</a></div>
-						</li>
-						<?php
-					} elseif (Session::exist('admin_sess_id')) {
-						?>
-						<form action="/logout" method="post">
-							<button type="submit" name="logout" class="btn btn-primary pull-right ">Logout</button>
-						</form>
-						<?php
-					} else {
-						?>
-						<li class="nav-item">
-							<a class="nav-link" href="/login">Login</a>
-						</li>
-						<li class="nav-item dropdown">
-							<a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Register</a>
-							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-								<a href="/signup" class="dropdown-item">User</a>
-								<a href="/register" class="dropdown-item">Business</a>
-							</div>
-						</li>
-						<?php
-					}
+<?php
+				if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
+?>
+					<li class="nav-item dropdown">
+					<a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class="fas fa-bell"></i><sup><span class="badge badge-pill badge-danger notif-count"></span></sup>
+					</a>
+					<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:380px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
+					</li>
+<?php
+				} elseif (Session::exist('admin_sess_id')) {
+?>
+					<form action="/logout" method="post">
+					<button type="submit" name="logout" class="btn btn-primary pull-right ">Logout</button>
+					</form>
+<?php
+				} else {
+?>
+				<li class="nav-item">
+				<a class="nav-link" href="/login">Login</a>
+				</li>
+				<li class="nav-item">
+				<a href="/signup" class="nav-link">Sign Up</a>
+				</li>
+<?php
+				}
 					if (Session::exist('u_sess_id')) {
 						$sql = "SELECT b_name, b_profile, b_username FROM stores WHERE user_id = :userid";
 						$result = DB::query($sql, [], true, ['userid' => Session::get('u_sess_id')]);

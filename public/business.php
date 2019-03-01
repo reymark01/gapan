@@ -11,7 +11,7 @@ if (Input::exist()) {
 			),
 			'price' => array(
 				'required' => true,
-				'pregmatch' => 'f'
+				'pregmatch' => 'e'
 			),
 			'file' => array(
 				'ftype' => array('jpg', 'jpeg', 'png')
@@ -26,11 +26,29 @@ if (Input::exist()) {
 				$key = '';
 			}
 			$sql = "INSERT INTO store_products (store_id, product_name, product_price, product_photo) VALUES (:id, :name, :price, :photo)";
-			if (DB::query($sql, ['name' => Input::get('name'), 'photo' => $key], true, ['id' => Session::get('b_sess_id'), 'price' => Input::get('price')])) {
+			if (DB::query($sql, ['name' => Input::get('name'), 'price' => Input::get('price'), 'photo' => $key], true, ['id' => Session::get('b_sess_id')])) {
 				if (!empty($_FILES['file']['name'])) {
 					move_uploaded_file($tmp_name, $productsphoto);
 				}
 			}
+		} else {
+			$errors = '';
+				/*foreach($validation->errors() as $error) {
+					$errors .= $error.'<br>';
+				}
+				Session::flash('regFail', $errors);*/
+				foreach($validation->errors() as $err) {
+					foreach($err as $field => $error) {
+						if ($field == 'price') {
+							$errors .= 'Price '.$error.'<br>';
+						} elseif ($field == 'name') {
+							$errors .= 'Name '.$error.'<br>';
+						} elseif ($field == 'file') {
+							$errors .= 'Image '.$error.'<br>';
+						}
+					}
+				}
+				Session::flash('addProductFail', $errors);
 		}
 	} elseif (!empty(Input::get('changeprofile'))) {
 		if (isset($_FILES['file']['size']) && !empty($_FILES['file']['size'])) {
@@ -93,7 +111,8 @@ if (Input::exist()) {
 					$files = Validate::arrangeArray($_FILES['file']);
 					for ($i=0; $i < count($files); $i++) {
 						$key = Token::uniqKey('store_wall_post_photos', 'bw_postphoto');
-						move_uploaded_file($files[$i]['tmp_name'], 'business_wall_photos/'.$key);
+						$photos = 'business_wall_photos/'.$key;
+						move_uploaded_file($files[$i]['tmp_name'], $photos);
 						$sql3 = "INSERT INTO store_wall_post_photos (store_wall_post_id, bw_postphoto) VALUES (:postid, :key)";
 						DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
 					}
@@ -256,6 +275,9 @@ if (Session::exist('bPostFail')) {
 if (Session::exist('businessFail')) {
 	echo '<div class="alert alert-danger" role="alert">'.Session::flash('businessFail').'</div>';
 }
+if (Session::exist('addProductFail')) {
+	echo '<div class="alert alert-danger" role="alert">'.Session::flash('addProductFail').'</div>';
+}
 if (!empty(Input::get('username'))) {
 	$sql = "SELECT * FROM stores WHERE b_account_verified = 1 AND b_username = :username";
 	$result = DB::query($sql, ['username' => Input::get('username')])->fetch();
@@ -281,7 +303,7 @@ if (!empty(Input::get('username'))) {
 								<div class="user-profile">
 									<div class="username-dt">
 										<div class="usr-pic">
-											<img src="/business_profiles/<?=$result['b_profile']?>" alt="">
+											<img src="/business_profiles/<?=$result['b_profile']?>" style="height: 120px;width: 120px;">
 										</div>
 									</div><!--username-dt end-->
 									<div class="user-specs">

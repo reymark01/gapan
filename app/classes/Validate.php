@@ -180,10 +180,17 @@ class Validate {
 				$month = 'Dec';
 			break;
 		}
-		if ($time[0] <= 12) {
-			$newtime = $time[0].':'.$time[1].' AM';
+		if ($time[0] <= 11) {
+			if ($time[0] == 0) {
+				$newtime = '12'.':'.$time[1].' AM';
+			} else {
+				$newtime = $time[0].':'.$time[1].' AM';
+			}
 		} else {
 			switch ($time[0]) {
+				case 12:
+					$newtime = '12:'.$time[1].' PM';
+				break;
 				case 13:
 					$newtime = '1:'.$time[1].' PM';
 				break;
@@ -217,11 +224,6 @@ class Validate {
 				case 23:
 					$newtime = '11:'.$time[1].' PM';
 				break;
-				case 24:
-					$newtime = '12:'.$time[1].' PM';
-				break;
-
-
 			}
 		}
 		return $month.' '.$date[2].', '.$date[0].' at '.$newtime;
