@@ -96,8 +96,8 @@ if (Input::exist()) {
 							$errors .= 'Business Name '.$error.'<br>';
 						} elseif ($field == 'contact') {
 							$errors .= 'Contact No. '.$error.'<br>';
-						} elseif ($field == 'street') {
-							$errors .= 'No. & Street '.$error.'<br>';
+						} elseif ($field == 'address') {
+							$errors .= 'Address '.$error.'<br>';
 						} elseif ($field == 'file') {
 							$errors .= 'Image'.$error.'<br>';
 						}
@@ -137,8 +137,8 @@ if (Input::exist()) {
 							$errors .= 'Business Name '.$error.'<br>';
 						} elseif ($field == 'contact') {
 							$errors .= 'Contact No. '.$error.'<br>';
-						} elseif ($field == 'street') {
-							$errors .= 'No. & Street '.$error.'<br>';
+						} elseif ($field == 'address') {
+							$errors .= 'Address '.$error.'<br>';
 						}
 					}
 				}

@@ -8,6 +8,27 @@ if (Input::exist()) {
 		$validation = $validate->check($_POST, array(
 			'file' => array(
 				'ftype' => array('jpg', 'jpeg', 'png')
+			),
+			'fname' => array(
+				'required' => true,
+				'min' => 1,
+				'max' => 30,
+				'pregmatch' => 'a'
+			),
+			'lname' => array(
+				'required' => true,
+				'min' => 1,
+				'max' => 30,
+				'pregmatch' => 'a'
+			),
+			'address' => array(
+				'required' => true
+			),
+			'contact' => array(
+				'required' => true,
+				'pregmatch' => 'c',
+				'min' => 11,
+				'max' => 11
 			)
 		));
 		if($validation->passed()) {
@@ -18,17 +39,89 @@ if (Input::exist()) {
 				$filename = 'user_profiles/'.Session::get('u_sess_profile');
 				unlink($filename);
 			}
-			$sql = "UPDATE users SET profile = :profile WHERE id = :id";
-			if (DB::query($sql, ['profile' => $key], true, ['id' => Session::get('u_sess_id')])) {
+			$sql = "UPDATE users SET fname = :fname, lname = :lname, profile = :profile, contact = :contact, address = :address WHERE id = :id";
+			if (DB::query($sql, ['profile' => $key, 'fname' => htmlspecialchars(Input::get('fname')), 'lname' => htmlspecialchars(Input::get('lname')), 'contact' => htmlspecialchars(Input::get('contact')), 'address' => htmlspecialchars(Input::get('address'))], true, ['id' => Session::get('u_sess_id')])) {
 				move_uploaded_file($tmp_name, $userprofiles);
 			}
+			Session::delete('u_sess_fname');
+			Session::delete('u_sess_lname');
 			Session::delete('u_sess_profile');
+			Session::create('u_sess_fname', htmlspecialchars(Input::get('fname')));
+			Session::create('u_sess_lname', htmlspecialchars(Input::get('lname')));
 			Session::create('u_sess_profile', $key);
+		} else {
+			$errors = '';
+			foreach($validation->errors() as $err) {
+				foreach($err as $field => $error) {
+					if ($field == 'fname') {
+						$errors .= 'First Name '.$error.'<br>';
+					} elseif ($field == 'lname') {
+						$errors .= 'Last Name '.$error.'<br>';
+					} elseif ($field == 'contact') {
+						$errors .= 'Contact No. '.$error.'<br>';
+					} elseif ($field == 'address') {
+						$errors .= 'Address '.$error.'<br>';
+					} elseif ($field == 'file') {
+						$errors .= 'Image'.$error.'<br>';
+					}
+				}
+			}
+			Session::flash('userFail', $errors);
+		}
+	} else {
+		$validate = new Validate();
+		$validation = $validate->check($_POST, array(
+			'fname' => array(
+				'required' => true,
+				'min' => 1,
+				'max' => 30,
+				'pregmatch' => 'a'
+			),
+			'lname' => array(
+				'required' => true,
+				'min' => 1,
+				'max' => 30,
+				'pregmatch' => 'a'
+			),
+			'address' => array(
+				'required' => true
+			),
+			'contact' => array(
+				'required' => true,
+				'pregmatch' => 'c',
+				'min' => 11,
+				'max' => 11
+			)
+		));
+		if($validation->passed()) {
+			$sql = "UPDATE users SET fname = :fname, lname = :lname, contact = :contact, address = :address WHERE id = :id";
+			if (DB::query($sql, ['fname' => htmlspecialchars(Input::get('fname')), 'lname' => htmlspecialchars(Input::get('lname')), 'contact' => htmlspecialchars(Input::get('contact')), 'address' => htmlspecialchars(Input::get('address'))], true, ['id' => Session::get('u_sess_id')])) {
+				Session::delete('u_sess_fname');
+				Session::delete('u_sess_lname');
+				Session::create('u_sess_fname', htmlspecialchars(Input::get('fname')));
+				Session::create('u_sess_lname', htmlspecialchars(Input::get('lname')));
+			}
+		} else {
+			$errors = '';
+			foreach($validation->errors() as $err) {
+				foreach($err as $field => $error) {
+					if ($field == 'fname') {
+						$errors .= 'First Name '.$error.'<br>';
+					} elseif ($field == 'lname') {
+						$errors .= 'Last Name '.$error.'<br>';
+					} elseif ($field == 'contact') {
+						$errors .= 'Contact No. '.$error.'<br>';
+					} elseif ($field == 'address') {
+						$errors .= 'Address '.$error.'<br>';
+					}
+				}
+			}
+			Session::flash('userFail', $errors);	
 		}
 	}
 }
 function changeProfileModal() {
-	$sql = "SELECT fname, lname, contact, b_address FROM users WHERE id = :id";
+	$sql = "SELECT fname, lname, contact, address FROM users WHERE id = :id";
 	$result = DB::query($sql, [], true, ['id' => Session::get('u_sess_id')])->fetch();
 ?>
 	<div class="modal fade" id="changeProfileModal" tabindex="-1" role="dialog" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
@@ -54,7 +147,7 @@ function changeProfileModal() {
 		        			<p style="font-weight: bold;">First Name</p>
 		        		</div>
 		        		<div class="col-sm-8">
-		        			<input class="form-control" type="text" name="name" value="<?=$result['b_name']?>">
+		        			<input class="form-control" type="text" name="fname" value="<?=$result['fname']?>">
 		        		</div>
 	        		</div>
 	        		<div class="row p-3">
@@ -62,7 +155,7 @@ function changeProfileModal() {
 		        			<p style="font-weight: bold;">Last Name</p>
 		        		</div>
 		        		<div class="col-sm-8">
-		        			<input class="form-control" type="text" name="name" value="<?=$result['b_name']?>">
+		        			<input class="form-control" type="text" name="lname" value="<?=$result['lname']?>">
 		        		</div>
 	        		</div>
 	        		<div class="row p-3">
@@ -70,7 +163,7 @@ function changeProfileModal() {
 		        			<p style="font-weight: bold;">Address</p>
 		        		</div>
 		        		<div class="col-sm-8">
-		        			<input class="form-control" type="text" name="address" value="<?=$result['b_address']?>">
+		        			<input class="form-control" type="text" name="address" value="<?=$result['address']?>">
 		        		</div>
 	        		</div>
 	        		<div class="row p-3">
@@ -78,7 +171,7 @@ function changeProfileModal() {
 		        			<p style="font-weight: bold;">Contact No.</p>
 		        		</div>
 		        		<div class="col-sm-8">
-		        			<input class="form-control" type="text" name="contact" value="<?=$result['b_contact']?>">
+		        			<input class="form-control" type="text" name="contact" value="<?=$result['contact']?>">
 		        		</div>
 	        		</div>
 	        	</div>
@@ -125,6 +218,10 @@ require_once 'layout/newheader.php';
 
 $posts = [];
 
+if (Session::exist('userFail')) {
+	echo '<div class="alert alert-danger" role="alert">'.Session::flash('userFail').'</div>';
+}
+
 if (!empty(Input::get('username'))) {
 	$username = $_GET['username'];
 	$result = DB::query("SELECT * FROM users WHERE account_verified = 1 AND username = :username", ['username' => $username])->fetch();
@@ -152,7 +249,7 @@ if (!empty(Input::get('username'))) {
 									<div class="user-specs">
 <?php
 									if (Session::exist('u_sess_id') && $result['id'] == Session::get('u_sess_id')) {
-										echo '<a href="#" id="changeprofile">Change Profile</a>';
+										echo '<a href="#" id="changeprofile">Edit Profile</a>';
 										changeProfileModal();
 									}
 ?>
@@ -162,7 +259,7 @@ if (!empty(Input::get('username'))) {
 								</div><!--user-profile end-->
 								<ul class="template user-fw-status">
 									<li class="template">
-										<div><i class="fas fa-map-marker" style="color:green;"></i></div>
+										<div><i class="fas fa-map-marker fa-lg" style="color:green;" title="Location"></i></div>
 										<p><?=$result['address']?></p>
 									</li>
 									<li class="template">
@@ -349,14 +446,14 @@ if (!empty(Input::get('username'))) {
     </div>
   </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
 <script type="text/javascript" src="/js/popper.js"></script>
 <script type="text/javascript" src="/js/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript" src="/lib/slick/slick.min.js"></script>
 <script type="text/javascript" src="/js/scrollbar.js"></script>
 <script type="text/javascript" src="/js/script.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://js.pusher.com/4.3/pusher.min.js"></script>
 <script src="/js/main.js"></script>
 <script>
 $(document).ready(function() {
