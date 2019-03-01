@@ -66,9 +66,9 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 			    $mail = new PHPMailer();
 			    $mail->isSMTP();
 			    $mail->SMTPAuth = true;
-			    $mail->SMTPSecure = 'ssl';
+			    $mail->SMTPSecure = 'tls';
 			    $mail->Host = 'smtp.gmail.com';
-			    $mail->Port = '465';
+			    $mail->Port = '587';
 			    $mail->isHTML();
 			    $mail->Username = 'gapanwebsitetest@gmail.com';
 			    $mail->Password = 'testwebsite123';
