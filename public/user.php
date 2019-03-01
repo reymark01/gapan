@@ -88,7 +88,7 @@ if (!empty(Input::get('username'))) {
 	$username = $_GET['username'];
 	$result = DB::query("SELECT * FROM users WHERE account_verified = 1 AND username = :username", ['username' => $username])->fetch();
 	if (!empty($result)) {
-		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, u_post, u_title, u_postprice, u_postedited, u_poststatus, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id AND u_poststatus != 2 ORDER BY user_post.id DESC LIMIT 0, 5";
+		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, address, u_post, u_title, u_postprice, u_postedited, u_poststatus, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id AND u_poststatus != 2 ORDER BY user_post.id DESC LIMIT 0, 5";
 		$res = DB::query($sql, [], true, ['id' => $result['id'], 'veri' => 1]);
 		while ($row = $res->fetch()) {
 				array_push($posts,$row);
@@ -120,6 +120,10 @@ if (!empty(Input::get('username'))) {
 									</div>
 								</div><!--user-profile end-->
 								<ul class="template user-fw-status">
+									<li class="template">
+										<div><i class="fas fa-map-marker" style="color:green;"></i></div>
+										<p><?=$result['address']?></p>
+									</li>
 									<li class="template">
 										<h4>E-mail</h4>
 										<p><?=$result['email']?></p>

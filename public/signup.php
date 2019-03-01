@@ -54,6 +54,9 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 					'pregmatch' => 'c',
 					'min' => 11,
 					'max' => 11
+				),
+				'address' => array(
+					'required' => true
 				)
 			));
 			if($validation->passed()) {
@@ -85,8 +88,8 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 			    	$fname = ucfirst(strtolower(Input::get('fname')));
 			    	$lname = ucfirst(strtolower(Input::get('lname')));
 			   		$hash = password_hash(Input::get('password'), PASSWORD_DEFAULT);
-					$sql = "INSERT INTO users (fname, lname, username, password, email, contact, gender, profile, token) VALUES (:fname, :lname, :username, :password, :email, :contact, :gender, :profile, :token)";
-					if (DB::query($sql, ['fname' => htmlspecialchars($fname), 'lname' => htmlspecialchars($lname), 'username' => htmlspecialchars(Input::get('username')), 'password' => $hash, 'email' => htmlspecialchars(Input::get('email')), 'contact' => htmlspecialchars(Input::get('contact')), 'gender' => Input::get('option'), 'profile' => $key, 'token' => $etoken])) {
+					$sql = "INSERT INTO users (fname, lname, username, password, email, contact, gender, profile, token, address) VALUES (:fname, :lname, :username, :password, :email, :contact, :gender, :profile, :token, :address)";
+					if (DB::query($sql, ['fname' => htmlspecialchars($fname), 'lname' => htmlspecialchars($lname), 'username' => htmlspecialchars(Input::get('username')), 'password' => $hash, 'email' => htmlspecialchars(Input::get('email')), 'contact' => htmlspecialchars(Input::get('contact')), 'gender' => Input::get('option'), 'profile' => $key, 'token' => $etoken, 'address' => htmlspecialchars(Input::get('address'))])) {
 						if (!empty($_FILES['file']['name'])) {
 							move_uploaded_file($tmp_name, $userprofiles);
 						}
@@ -166,6 +169,9 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 					<br>
 					<label>Profile</label>
 					<input type="file" name="file" class="form-control">
+					<br>
+					<label>Address</label>
+					<input type="text" name="address" class="form-control" value="<?php echo Input::get('address'); ?>" placeholder="Address">
 					<br>
 					<label>E-mail</label>
 					<input type="text" name="email" class="form-control" value="<?php echo Input::get('email'); ?>" placeholder="E-mail">
