@@ -28,6 +28,8 @@ if (Input::exist()) {
 	}
 }
 function changeProfileModal() {
+	$sql = "SELECT fname, lname, contact, b_address FROM users WHERE id = :id";
+	$result = DB::query($sql, [], true, ['id' => Session::get('u_sess_id')])->fetch();
 ?>
 	<div class="modal fade" id="changeProfileModal" tabindex="-1" role="dialog" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
@@ -40,7 +42,46 @@ function changeProfileModal() {
 	      </div>
 	      <div class="modal-body">
 	      	<form action="" method="post" enctype="multipart/form-data">
-	        	<input type="file" name="file">
+	        	<div class="container">
+	        		<div class="row p-3">
+	        			<div class="col-sm-4">
+	        				<p style="font-weight: bold;">Profile</p>
+	        			</div>
+	        			<div class="col-sm-8"><input type="file" name="file"></div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">First Name</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="name" value="<?=$result['b_name']?>">
+		        		</div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Last Name</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="name" value="<?=$result['b_name']?>">
+		        		</div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Address</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="address" value="<?=$result['b_address']?>">
+		        		</div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Contact No.</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="contact" value="<?=$result['b_contact']?>">
+		        		</div>
+	        		</div>
+	        	</div>
 	      </div>
 	      <div class="modal-footer">
 	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

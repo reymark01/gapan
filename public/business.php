@@ -56,6 +56,20 @@ if (Input::exist()) {
 			$validation = $validate->check($_POST, array(
 				'file' => array(
 					'ftype' => array('jpg', 'jpeg', 'png')
+				),
+				'name' => array(
+					'required' => true,
+					'max' => 50,
+					'prematch' => 'd'
+				),
+				'address' => array(
+					'required' => true
+				),
+				'contact' => array(
+					'required' => true,
+					'pregmatch' => 'c',
+					'min' => 11,
+					'max' => 11
 				)
 			));
 			if($validation->passed()) {
@@ -66,14 +80,69 @@ if (Input::exist()) {
 					$filename = 'business_profiles/'.Session::get('b_sess_profile');
 					unlink($filename);
 				}
-				$sql = "UPDATE stores SET b_profile = :profile WHERE id = :id";
-				if (DB::query($sql, ['profile' => $key], true, ['id' => Session::get('b_sess_id')])) {
+				$sql = "UPDATE stores SET b_profile = :profile, b_name = :name, b_contact = :contact, b_address = :address WHERE id = :id";
+				if (DB::query($sql, ['profile' => $key, 'name' => htmlspecialchars(Input::get('name')), 'contact' => htmlspecialchars(Input::get('contact')), 'address' => htmlspecialchars(Input::get('address'))], true, ['id' => Session::get('b_sess_id')])) {
 					move_uploaded_file($tmp_name, $businessprofiles);
+					Session::delete('b_sess_profile');
+					Session::delete('b_sess_b_name');
+					Session::create('b_sess_profile', $key);
+					Session::create('b_sess_b_name', htmlspecialchars(Input::get('name')));
 				}
-				Session::delete('b_sess_profile');
-				Session::create('b_sess_profile', $key);
 			} else {
-				Session::flash('businessFail', 'Failed!');
+				$errors = '';
+				foreach($validation->errors() as $err) {
+					foreach($err as $field => $error) {
+						if ($field == 'name') {
+							$errors .= 'Business Name '.$error.'<br>';
+						} elseif ($field == 'contact') {
+							$errors .= 'Contact No. '.$error.'<br>';
+						} elseif ($field == 'street') {
+							$errors .= 'No. & Street '.$error.'<br>';
+						} elseif ($field == 'file') {
+							$errors .= 'Image'.$error.'<br>';
+						}
+					}
+				}
+				Session::flash('businessFail', $errors);
+			}
+		} else {
+			$validate = new Validate();
+			$validation = $validate->check($_POST, array(
+				'name' => array(
+					'required' => true,
+					'max' => 50,
+					'prematch' => 'd'
+				),
+				'address' => array(
+					'required' => true
+				),
+				'contact' => array(
+					'required' => true,
+					'pregmatch' => 'c',
+					'min' => 11,
+					'max' => 11
+				)
+			));
+			if($validation->passed()) {
+				$sql = "UPDATE stores SET b_name = :name, b_contact = :contact, b_address = :address WHERE id = :id";
+				if (DB::query($sql, ['name' => htmlspecialchars(Input::get('name')), 'contact' => htmlspecialchars(Input::get('contact')), 'address' => htmlspecialchars(Input::get('address'))], true, ['id' => Session::get('b_sess_id')])) {
+					Session::delete('b_sess_b_name');
+					Session::create('b_sess_b_name', htmlspecialchars(Input::get('name')));
+				}
+			} else {
+				$errors = '';
+				foreach($validation->errors() as $err) {
+					foreach($err as $field => $error) {
+						if ($field == 'name') {
+							$errors .= 'Business Name '.$error.'<br>';
+						} elseif ($field == 'contact') {
+							$errors .= 'Contact No. '.$error.'<br>';
+						} elseif ($field == 'street') {
+							$errors .= 'No. & Street '.$error.'<br>';
+						}
+					}
+				}
+				Session::flash('businessFail', $errors);	
 			}
 		}
 	} else {
@@ -148,19 +217,52 @@ $result=  [];
 $posts = [];
 
 function changeProfileModal() {
+	$sql = "SELECT b_contact, b_name, b_address FROM stores WHERE id = :id";
+	$result = DB::query($sql, [], true, ['id' => Session::get('b_sess_id')])->fetch();
 ?>
 	<div class="modal fade" id="changeProfileModal" tabindex="-1" role="dialog" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title" id="changeProfileModalLabel">Change Profile</h5>
+	        <h5 class="modal-title" id="changeProfileModalLabel">Edit Profile</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
 	      <div class="modal-body">
 	      	<form action="" method="post" enctype="multipart/form-data">
-	        	<input type="file" name="file">
+	        	<div class="container">
+	        		<div class="row p-3">
+	        			<div class="col-sm-4">
+	        				<p style="font-weight: bold;">Profile</p>
+	        			</div>
+	        			<div class="col-sm-8"><input type="file" name="file"></div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Business Name</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="name" value="<?=$result['b_name']?>">
+		        		</div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Address</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="address" value="<?=$result['b_address']?>">
+		        		</div>
+	        		</div>
+	        		<div class="row p-3">
+		        		<div class="col-sm-4">
+		        			<p style="font-weight: bold;">Contact No.</p>
+		        		</div>
+		        		<div class="col-sm-8">
+		        			<input class="form-control" type="text" name="contact" value="<?=$result['b_contact']?>">
+		        		</div>
+	        		</div>
+	        	</div>
 	      </div>
 	      <div class="modal-footer">
 	        	<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -309,7 +411,7 @@ if (!empty(Input::get('username'))) {
 									<div class="user-specs">
 <?php
 									if (Session::exist('b_sess_id') && $result['id'] == Session::get('b_sess_id')) {
-										echo '<a href="#" id="changeprofile">Change Profile</a>';
+										echo '<a href="#" id="changeprofile">Edit Profile</a>';
 										changeProfileModal();
 									}
 ?>
@@ -647,7 +749,7 @@ if (!empty(Input::get('username'))) {
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button type="submit" class="btn btn-primary">Post</button>
         </form>
       </div>
     </div>

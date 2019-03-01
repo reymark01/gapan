@@ -50,6 +50,41 @@ if (Session::exist('noUserReg')) {
 		<span class="sr-only">Next</span>
 	</a>
 </div>
+<TABLE WIDTH=1000 height=20 BORDER=0 CELLPADDING=0 CELLSPACING=0 align="center" background="white.png">
+		<TD><br>
+			<h2> <center>City Mayor's Message</center></h2>
+		</TD>
+	</TR>
+</TABLE>
+
+			<TABLE WIDTH=1000 height= BORDER=0 CELLPADDING=0 CELLSPACING=0 align="center" background="white.png">		
+			
+				<tr>
+						<td>
+							<center><img src="/image/mayor.png" alt="ortho" class="mypic" align="center" height="500"/>
+							
+							<audio controls>
+									<source src="/image/Government.mp3" type="audio/mpeg">
+								</audio><h4>Mayor Emeng New Song</h4></center>
+
+						</td>
+						<td>
+							
+							<p style="font-family:arial; font-size:15pt" align="justify">Welcome to the official website of Gapan City!<br>
+							<br>
+							Through this website, the City Government of Gapan would like to report its accomplishments. As public servants, we are accountable to the public and it is our obligation to inform them of what we are doing. This is also our way of implementing the principle of transparency which is one ingredient of good governance.<br>
+							<br>
+							I encourage all the citizens of Gapan to read the website and provide us with your constructive suggestions and recommendations so that we can further improve our performance as public servants of our city.<br>
+							<bR>
+							May God continue to bless and guide us all!</p>
+					
+							<h3 style="font-family:Monotype Corsiva; font-size:35; color:darkblue" align="right">	<br>HON. EMERSON D. PASCUAL</h3>
+					
+						</td>
+						
+				</tr>
+			
+			</TABLE><br><br>
 <?php
 	echo '<br><br><div class="separator" style="font-size: 35px;">ANNOUNCEMENTS</div><br><br>';
 	$sql2 = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT 3";
@@ -149,6 +184,28 @@ if (Session::exist('noUserReg')) {
 
 	echo '<center><a href="events" class="showmore">See all events</a></center><br><br><br><br><br><br>';
 ?>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-4">
+		<h3>Like us on facebook!</h3>
+			<div class="fb-page" data-href="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/">Mayor Emeng Pascual - Serbisyo Publiko</a></blockquote></div></div>
+		<div class="col-sm-8">
+			<br>
+			<iframe width="775" height="460" src="https://www.youtube.com/embed/iKqRVIss8iE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+		</div>
+	</div>
+</div>
+<div class="container p-2">
+	<div class="row">
+		<div class="col-sm-6" style="background-color: #f7f7f7">
+			<div style="text-align:center;padding:1em 0;"> <h2><a style="text-decoration:none;" href="https://www.zeitverschiebung.net/en/city/1713226"><br />Gapan, Philippines</a></h2> <iframe src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=large&timezone=Asia%2FManila" width="100%" height="140" frameborder="0" seamless></iframe> </div>
+		</div>
+		<div class="col-sm-6 d-flex justify-content-center" style="padding:40px;background-color: #f7f7f7">
+			<!-- weather widget start --><a target="_blank" href="https://www.booked.net/weather/gapan-w434007"><img src="https://w.bookcdn.com/weather/picture/3_w434007_1_1_137AE9_160_ffffff_333333_08488D_1_ffffff_333333_0_6.png?scode=124&domid=w209&anc_id=6211"  alt="booked.net"/></a><!-- weather widget end -->
+
+		</div>
+	</div>
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/4.3/pusher.min.js"></script>

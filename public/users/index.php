@@ -127,4 +127,4 @@ $(document).ready(function() {
 });
 </script>
 <?php
-require_once '../layout/footer.php';
+require_once '../layout/newfooter.php';

@@ -2,9 +2,41 @@
 require_once '../app/core/init.php';
 require_once 'layout/header.php';
 ?>
-<div class="container">
-	<table>
-		
+<div class="container p-3">
+	<table class="table table-bordered table-striped">
+	 	<thead>
+	    	<tr>
+	    		<th scope="col">Serbisyo</th>
+	    		<th scope="col">Tanggapan</th>
+	    		<th scope="col">Dokumentong dapat dalhin at proseso</th>
+	    	</tr>
+	  	</thead>
+		<tbody>
+	    	<tr>
+	    		<th scope="row">Pagkuha ng Business Permit</th>
+	    		<td>Business Permit and Licensing Office</td>
+	    	</tr>
+	    	<tr>
+	    		<th scope="row"> PAGKUHA NG ZONING CERTIFICATE PARA SA BUSUINESS PERMIT</th>
+	    		<td>One Stop Shop</td>
+	    		<td>
+	    			PARA SA RENEWAL:<br>
+					1.Ipakita ang application form galing sa tanggapan ng business permit<br>
+					2.Lalagyan ng kaukulang halaga ng babayaran<br>
+					3.Approval ng clearance
+	    		</td>
+	    	</tr>
+	    	<tr>
+	    		<th scope="row">PAGKUHA NG BUILDING INSPECTION CLEARANCE PARA SA BUSINESS PERMIT</th>
+	    		<td>City Engineer's Office</td>
+	    		<td>
+	    			PARA SA RENEWAL:<br>
+				  1. Ipakita ang application form galing saTanggapan ng Business Permit<br>
+				  2. Lalagyan ng kaukulang halaga ng babayaran<br>
+				  3. Approval ng clearance
+	    		</td>
+	    	</tr>
+	  	</tbody>
 	</table>	
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
