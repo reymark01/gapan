@@ -18,7 +18,7 @@ if (Input::exist()) {
 	if ($validation->passed()) {
 		$sql = "UPDATE gapan_post SET post = :post WHERE id = :id";
 		if (DB::query($sql, ['post' => Input::get('announcepost')], true, ['id' => $result['id']])) {
-			Redirect::to('/GapanCity');
+			Redirect::to('/admin/announcements');
 		}
 	}
 }

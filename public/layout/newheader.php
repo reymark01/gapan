@@ -27,12 +27,13 @@
 
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
+				<sup class="badge badge-pill badge-danger notif-count" style="font-size: 13px;"></sup>
 			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
+						<a class="nav-link" href="/GapanCity">Home<span class="sr-only">(current)</span></a>
 					</li>
 
 					<li class="nav-item">

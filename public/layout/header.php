@@ -14,7 +14,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
 <div class="container-fluid">
-<a class="navbar-brand toplogo" href="/"><img src="/image/seal.png" class="img-responsive" alt="logo">Gapan City</a>
+<a class="navbar-brand toplogo" href="/GapanCity"><img src="/image/seal.png" class="img-responsive" alt="logo">Gapan City</a>
 
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 <span class="navbar-toggler-icon"></span><sup class="badge badge-pill badge-danger notif-count" style="font-size: 13px;"></sup>

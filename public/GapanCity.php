@@ -8,9 +8,18 @@ if (Input::exist()) {
 	}
 }
 require_once 'layout/header.php';
+?>
+<div class="container p-4">
+	<div class="card">
+		<div class="card-header">
+			<img src="/image/seal.png" style="height: 100px;width: 100px;">
+			<h4>Gapan City</h4>
+			<h4>Announcements</h4>
+		</div>
+<?php
 $sql = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT :lim";
-$results = DB::query($sql, [], true, ['lim' => 3]);
-echo '<div class="container">
+$results = DB::query($sql, [], true, ['lim' => 5]);
+echo '<div class="container p-3">
 		<div class="row">
 			<div class="col-sm-2"></div>
 				<div class="col-sm-8" id="postappend">';
@@ -18,10 +27,6 @@ echo '<div class="container">
 						echo '<div class="border border-dark shadow p-3 mb-5 bg-white rounded">
 								<a href="GapanCity"><img class="imgsmall" src="image/seal.png">
 								<b>Gapan City</b></a>';
-						if (Session::exist('admin_sess_id')) {
-							echo '<a href="/admin/announcements/edit/'.$row['id'].'" class="btn btn-primary btn-sm float-right" style="position: absolute;margin-left:470px;">Edit</a>
-								<div id="announce-'.$row['id'].'" class="float-right"><a href="#" class="btn btn-danger btn-sm deleteAnnounce">Delete</a></div>';
-						}
 						echo '<br><small><b>'.Validate::formatDate($row['post_date']).'</b></small><br><br>
 							<div class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row['post'])).'</div>';
 						if (!empty($row['post_photo'])) {
@@ -34,6 +39,8 @@ echo '</div>
 	</div>
 	</div>';
 ?>
+	</div>
+</div>
 <div class="modal fade" id="deleteAnnounceModal" tabindex="-1" role="dialog" aria-labelledby="deleteAnnounceModalLabel"aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -62,8 +69,8 @@ echo '</div>
 <script src="js/main.js"></script>
 <script>
 $(document).ready(function() {
-	var gpstart = 3;
-	var gplimit = 1;
+	var gpstart = 5;
+	var gplimit = 5;
 
 	var channelgapanpost = pusher.subscribe('gapanPostChannel');
 	var u_sess_id = "<?php echo Session::exist('u_sess_id') ? Session::get('u_sess_id') : '' ?>";
@@ -123,5 +130,5 @@ $(document).ready(function() {
 	});
 });
 </script>
-</body>
-</html>
+<?php
+require_once 'layout/footer.php';
