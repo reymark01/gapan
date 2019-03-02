@@ -51,15 +51,8 @@ if (Session::exist('noUserReg')) {
 	</a>
 </div>
 <div class="container">
-	<h2><center>City Mayor's Message</center></h2>
-	<div class="row">
-		<div class="col-sm-3">
-			<img src="/image/mayor.png" alt="ortho" class="mypic" align="center" height="500"/>
-			<audio controls>
-				<source src="/image/Government.mp3" type="audio/mpeg">
-			</audio>
-			<h4>Mayor Emeng New Song</h4>
-		</div>
+	<h2 class="p-3"><center>City Mayor's Message</center></h2>
+	<div class="row flex-sm-row-reverse">
 		<div class="col-sm-9">
 			<p style="font-family:arial; font-size:15pt" align="justify">Welcome to the official website of Gapan City!<br><br>
 					Through this website, the City Government of Gapan would like to report its accomplishments. As public servants, we are accountable to the public and it is our obligation to inform them of what we are doing. This is also our way of implementing the principle of transparency which is one ingredient of good governance.<br>
@@ -68,6 +61,13 @@ if (Session::exist('noUserReg')) {
 					<bR>
 					May God continue to bless and guide us all!</p>
 					<h3 style="font-family:Monotype Corsiva; font-size:35; color:darkblue" align="right">HON. EMERSON D. PASCUAL</h3>
+		</div>
+		<div class="col-sm-3">
+			<img src="/image/mayor.png" alt="ortho" class="mypic" align="center" height="500"/>
+			<audio controls>
+				<source src="/image/Government.mp3" type="audio/mpeg">
+			</audio>
+			<h4>Mayor Emeng New Song</h4>
 		</div>
 	</div>
 </div>
@@ -171,21 +171,16 @@ if (Session::exist('noUserReg')) {
 	echo '<center><a href="events" class="showmore">See all events</a></center><br><br><br><br><br><br>';
 ?>
 <div class="container">
-	<div class="row">
-		<div class="col-sm-4">
-			<h3>Like us on facebook!</h3>
+	<div class="row flex-sm-row-reverse">
+		<div class="col-sm-8 embed-responsive embed-responsive-16by9">
+			<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/iKqRVIss8iE" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 		</div>
-	</div>
-	<div class="row">
 		<div class="col-sm-4">
 			<div class="fb-page" data-href="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
 				<blockquote cite="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/" class="fb-xfbml-parse-ignore">
 					<a href="https://www.facebook.com/Mayor-Emeng-Pascual-Serbisyo-Publiko-1717200598522787/">Mayor Emeng Pascual - Serbisyo Publiko</a>
 				</blockquote>
 			</div>
-		</div>
-		<div class="col-sm-8 embed-responsive embed-responsive-16by9">
-			<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/iKqRVIss8iE" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 		</div>
 	</div>
 </div>

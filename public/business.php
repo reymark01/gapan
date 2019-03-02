@@ -518,7 +518,7 @@ if (!empty(Input::get('username'))) {
 										if (!empty($post['postid'])) {
 											echo '<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
 												<ul class="template ed-options">
-													<li class="template edit-post"><a href="#" postID="'.$post['postid'].'">Edit Post</a></li>';
+													<li class="template edit-post"><a href="#" postID="'.$post['postid'].'">Edit</a></li>';
 											if ($post['b_poststatus'] == 1) {
 												echo '<li class="template mark-available"><a href="#" postID="'.$post['postid'].'">Mark as Available</a></li>';
 											} elseif ($post['b_poststatus'] == 0) {
@@ -528,7 +528,8 @@ if (!empty(Input::get('username'))) {
 										} elseif (!empty($post['wallpostid'])) {
 											echo '<a href="#" title="" class="ed-opts-open"><i class="la la-ellipsis-v"></i></a>
 												<ul class="template ed-options">
-													<li class="template edit-wallpost"><a href="#" postID="'.$post['wallpostid'].'">Edit Post</a></li>';	
+													<li class="template edit-wallpost"><a href="#" postID="'.$post['wallpostid'].'">Edit</a></li>
+													<li class="template delete-wallpost"><a href="#" postID="'.$post['wallpostid'].'">Delete</a></li>';
 										}
 
 ?>
@@ -605,7 +606,7 @@ if (!empty(Input::get('username'))) {
 						<div class="right-sidebar">
 							<div class="widget widget-jobs">
 								<div class="sd-title">
-									<a href="/business/<?=$result['b_username']?>/offers"><h3>Services</h3></a>
+									<a href="/business/<?=$result['b_username']?>/offers"><h3>Offers</h3></a>
 <?php
 									if (Session::exist('b_sess_id') && Session::get('b_sess_id') == $result['id']) {
 ?>
@@ -770,10 +771,33 @@ if (!empty(Input::get('username'))) {
         Are you sure you want to mark this post as Done/Sold?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <form class="postDoneForm">
         	<input type="hidden" id="postDoneID" value="">
         	<button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="wallPostDeleteModal" tabindex="-1" role="dialog" aria-labelledby="wallPostDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="wallPostDeleteModalLabel">Delete Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	Are you sure you want to delete this post?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <form class="wallpostDeleteForm">
+        	<input type="hidden" id="wallpostDeleteID" value="">
+        	<button type="submit" class="btn btn-primary">Delete Post</button>
         </form>
       </div>
     </div>
@@ -1495,6 +1519,34 @@ $(document).ready(function() {
 			div.find('.edit-buttons').html('');
 			editdiv.show();
 		})
+	});
+	$('body').on('click', '.delete-wallpost', function(e) {
+		e.preventDefault();;
+		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
+		$(this).hide();
+		var div = $(this).parent().parent();
+		var postID = e.target.attributes[1].value;
+		$('#wallpostDeleteID').val(postID);
+		$('#wallPostDeleteModal').modal('show');
+		var postDeleteID = $('#wallpostDeleteID').val();
+		var postsection = $(this).parent().parent().parent().parent().parent();
+		$('body').on('submit', '.wallpostDeleteForm', function(e) {
+			e.preventDefault();
+			var postDeleteID = $('#wallpostDeleteID').val();
+			$.ajax({
+				url: '/ajax/editbusinesswallpoststatus.php',
+				method: 'post',
+				data: {
+					wallpostdelete: true,
+					postid: postDeleteID
+				},
+				success: function() {
+					postsection.hide();
+					$('#wallPostDeleteModal').modal('hide');
+					div.find('.ed-opts-open').hide();
+				}
+			});
+		});
 	});
 	$('body').on('click', '.mark-reserved', function (e) {
 		e.preventDefault();

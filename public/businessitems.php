@@ -6,18 +6,27 @@ if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('t
 	$result = DB::query("SELECT * FROM stores WHERE b_account_verified = :one AND b_username = :username", ['username' => Input::get('username')], true, ['one' => 1])->fetch();
 	if (!empty($result)) {
 			$sql = "SELECT * FROM store_products WHERE store_id = :id";
-			$result = DB::query($sql, [], true, ['id' => $result['id']]);
+			$result2 = DB::query($sql, [], true, ['id' => $result['id']]);
 ?>
+		<div class="container p-3">
+			<div class="card">
+			<div class="card-header">
+				<a href="/business/<?=$result['b_username']?>" style="color:black;text-decoration: none;"><img class="rounded-circle" src="/business_profiles/<?=$result['b_profile']?>" style="width: 100px;height: 100px;">
+				<h3><?=$result['b_name']?></h3></a>
+				<br>
+				<h4>Offers List</h4>
+			</div>
+			<div class="card-body">
 			<div class="row">
 <?php
-			while($row = $result->fetch()) {
+			while($row = $result2->fetch()) {
 ?>			
 				<div class="col-sm-3">
-            		<div class="card" style="margin: 15px; ">
-            			<div class="card-body">
+            		<div class="card" style="margin: 15px;">
+            			<div class="card-header" style="background-color: white;">
  <?php
  						if (!empty($row['product_photo'])) {
-							echo '<img src="/product_photos/'.$row['product_photo'].'" style="width: 100px; height: 100px;"><br>';
+							echo '<img src="/product_photos/'.$row['product_photo'].'" style="width: 180px; height: 200px;"><br>';
 						}
 						$sql = "SELECT ROUND(AVG(product_rate), 2) as 'rate' FROM store_product_rate WHERE product_id = :product_id";
 						$avg = DB::query($sql, [], true, ['product_id' => $row['id']])->fetch();
@@ -47,35 +56,44 @@ if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('t
 ?>
 						<hr>
             			<span style="text-align:center; font-size: 30px;"><?=$row['product_name']?></span><br>
-            			Price: <?=$row['product_price']?><br>
+            			₱<?=$row['product_price']?><br>
+            			</div>
             			<div class="card-footer">
             			</div>
-					</div>
 				</div>
 			</div>
 <?php
 		}
 ?>
 	</div>
+	</div>
+	</div>
+</div>
 	<div class="modal fade" id="ratingsModal" tabindex="-1" role="dialog" aria-labelledby="ratingsModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 	    	<div class="modal-content">
-	    		<div class="modal-header">
-	    			<div class="modal-title"></div>
+	    		<div class="modal-header bg-primary">
+	    			<div class="modal-title" style="color:white;">Rate Offer</div>
 		        	<button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
 		        		<span aria-hidden="true">&times;</span>
 		        	</button>
 	      		</div>
 	    		<div class="modal-body">
-	    			<h3>Rate <span id="prod_name"></span></h3><br>
-	      			<form id="rateProductForm">
-						<span id="rate1" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-						<span id="rate2" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-						<span id="rate3" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-						<span id="rate4" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-						<span id="rate5" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
-	      				<input id="rate" type="hidden" value="">
-	      				<input id="prod_id" type="hidden" value="">
+	    			<div class="container">
+	    				<div class="row d-flex justify-content-center">
+	    					<h3>Rate <span id="prod_name"></span></h3><br>
+	    				</div>
+	    				<div class="row d-flex justify-content-center">
+			      			<form id="rateProductForm">
+								<span id="rate1" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+								<span id="rate2" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+								<span id="rate3" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+								<span id="rate4" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+								<span id="rate5" style="font-size:20px;cursor:pointer;" class="fa fa-star rates"></span>
+			      				<input id="rate" type="hidden" value="">
+			      				<input id="prod_id" type="hidden" value="">
+			      		</div>
+	    			</div>
 	      		</div>
 	      		<div class="modal-footer">
 	        		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
