@@ -8,7 +8,7 @@ if (Input::exist()) {
 				echo '<div class="container">
 						<form class="form-group ucomment-form">
 						<textarea class="form-control ucommentarea" name="comment"></textarea>
-						<button type="submit" class="btn btn-primary btn-sm float-right m-2">Post comment</button><br>
+						<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
 						</form>
 					</div><hr>';
 			} else {

@@ -7,19 +7,10 @@ if (Input::exist()) {
 		if (!empty(Input::get('first'))) {
 			if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 				echo '<div class="container row">
-						<div class="col-sm-2">';
-						if (Session::exist('u_sess_id')) {
-							echo '<img class="imgsmall rounded-circle" src="/user_profiles/'.Session::get('u_sess_profile').'">';
-						} elseif (Session::exist('b_sess_id')) {
-							echo '<img class="imgsmall rounded-circle" src="/business_profiles/'.Session::get('b_sess_profile').'">';
-						}
-				echo '</div>
-					    <div class="col-sm-10">
-							<form class="form-group wcomment-form">
-							<textarea class="form-control wcommentarea" name="comment"></textarea>
-							<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
-							</form>
-						</div>
+						<form class="form-group wcomment-form">
+						<textarea class="form-control wcommentarea" name="comment"></textarea>
+						<button type="submit" class="btn btn-primary btn-sm float-right">Post comment</button><br>
+						</form>
 					</div><hr>';
 			} else {
 				echo '<a href="/login">Login</a><hr>';
