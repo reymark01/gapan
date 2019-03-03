@@ -5,7 +5,7 @@ var pusher = new Pusher('be49c320ccd26cd0faa2', {
 var addNotifChannel = pusher.subscribe('addNotifChannel');
 var bAddNotifyChannel = pusher.subscribe('bAddNotifyChannel');
 var uAddNotifyChannel = pusher.subscribe('uAddNotifyChannel');
-var nstart = 0;
+var nstart = 5;
 var nlimit = 5;
 addNotifChannel.bind('addNotifEvent', function(data) {
 	var notifcount = $(".notif-count").html();
@@ -15,26 +15,6 @@ addNotifChannel.bind('addNotifEvent', function(data) {
 	var count = parseInt(notifcount)+parseInt(data['count']);
 	$(".notif-count").html(count);
 });
-var getNotifications = function() {
-	$.ajax({
-		url: '/ajax/shownotifications.php',
-		method: 'POST',
-		data: {
-			postgetnotifications: true,
-			start: nstart,
-			limit: nlimit
-		},
-		success: function(data) {
-			if (data != '') {
-				$(".notiflist").append(data);
-				nstart += nlimit;
-			} else {
-				$('.seemorenotif').hide();
-			}
-			$('.notif-count').html('');
-		}
-	});
-}
 var notifCount = function() {
 	$.ajax({
 		url: '/ajax/notif-count.php',
@@ -47,12 +27,48 @@ var notifCount = function() {
 		}
 	});
 }
-$(".notif-dropdown").on('click', function() {
-	 getNotifications();
+$('body').on('click', '.notif-dropdown', function(e) {
+	$.ajax({
+		url: '/ajax/shownotifications.php',
+		method: 'POST',
+		data: {
+			postgetnotifications: true,
+			start: 0,
+			limit: 5
+		},
+		success: function(data) {
+			if (data != '') {
+				$(".notiflist").html(data);
+			} else {
+				$('.seemorenotif').css('visibility', 'hidden');
+			}
+			nstart = 5;
+			nlimit = 5;
+			$('.notif-count').html('');
+		}
+	});
 });
 notifCount();
-$('.seemorenotif').on('click', function(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  getNotifications();
+$('body').on('click', '.seemorenotif', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var div = $(this);
+    $.ajax({
+		url: '/ajax/shownotifications.php',
+		method: 'POST',
+		data: {
+			postgetnotifications: true,
+			start: nstart,
+			limit: nlimit
+		},
+		success: function(data) {
+			if (data != '') {
+				$(".notiflist").append(data);
+				nstart += nlimit;
+			} else {
+				div.css('visibility', 'hidden');
+			}
+			$('.notif-count').html('');
+		}
+	});
 });

@@ -66,7 +66,7 @@ if (Session::exist('noUserReg')) {
 			<audio controls>
 				<source src="/image/Government.mp3" type="audio/mpeg">
 			</audio>
-			<h4>Mayor Emeng New Song</h4>
+			<h5>Mayor Emeng New Song</h5>
 		</div>
 	</div>
 </div>
