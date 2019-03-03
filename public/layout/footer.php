@@ -21,8 +21,8 @@
     </div>
   </div>
 </div>
-<footer class="footer-distributed footerdiv">
-  <div class="container p-5">
+<footer class="footer-distributed">
+  <div class="container p-3">
     <div class="row">
       <div class="col-sm-4">
         <div style="color:white;">Republic of the Philippines</div>
@@ -64,12 +64,12 @@
       </div>          
       <div class="col-sm-4">
         <p style="color: white;">Contact Us</p>
-        <form id="contactUsForm" action="#" method="post">
-          <input type="text" id="contactUsEmail" name="email" placeholder="Email" />
+        <form id="contactUsForm" action="#" method="post" style="width: 100%;">
+          <input type="text" id="contactUsEmail" name="email" placeholder="Email">
           <textarea id="contactUsMessage" name="message" placeholder="Message"></textarea>
           <button>Send</button>
         </form>
-        <div style="margin-left: 50px;color: white;">
+        <div style="margin-left: 20px;color: white;padding: 10px;">
           <p>For more information</p>
           <p>Call:</p>
           <ul>
@@ -79,7 +79,7 @@
           </ul>
           <br>
           <p>E-mail</p>
-          <a href="google.com">emengpascual19@yahoo.com</a>
+          <a href="http://yahoo.com">emengpascual19@yahoo.com</a>
         </div>
       </div>
     </div>

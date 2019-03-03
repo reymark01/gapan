@@ -172,8 +172,8 @@ body .modal-body .checked {
 	width: 100%;
 	font: bold 16px sans-serif;
 	text-align: left;
-	padding: 20px 60px 0px;
-	margin-top: 80px;
+	padding: 10px 10px 0px;
+	margin-top: 30px;
 	overflow: hidden;
 }
 
@@ -274,7 +274,7 @@ body .modal-body .checked {
 	font-weight: normal;
 	color:  #d1d2d2;
 
-	width: 400px;
+	width: 100%;
 	padding: 18px;
 }
 
@@ -314,7 +314,7 @@ body .modal-body .checked {
 
 /* If you don't want the footer to be responsive, remove these media queries */
 
-@media (max-width: 1000px) {
+/*@media (max-width: 1000px) {
 
 	.footer-distributed {
 		font: bold 14px sans-serif;
@@ -363,7 +363,7 @@ body .modal-body .checked {
 	.footer-distributed form button{
 		float: none;
 	}
-}
+}*/
 
 .footercolor {
 	color: #666666;

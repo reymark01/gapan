@@ -22,7 +22,6 @@ if (Session::exist('noUserReg')) {
 		<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
 		<li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
 		<li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
-		<li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
 	</ol>
 	<div class="carousel-inner">
 		<div class="carousel-item active">
@@ -63,7 +62,7 @@ if (Session::exist('noUserReg')) {
 					<h3 style="font-family:Monotype Corsiva; font-size:35; color:darkblue" align="right">HON. EMERSON D. PASCUAL</h3>
 		</div>
 		<div class="col-sm-3">
-			<img src="/image/mayor.png" alt="ortho" class="mypic" align="center" height="500"/>
+			<img src="/image/mayor.png" style="width: 100%;height: 90%">
 			<audio controls>
 				<source src="/image/Government.mp3" type="audio/mpeg">
 			</audio>
@@ -72,7 +71,7 @@ if (Session::exist('noUserReg')) {
 	</div>
 </div>
 <?php
-	echo '<br><br><div class="separator" style="font-size: 35px;">ANNOUNCEMENTS</div><br><br>';
+	echo '<br><br><div class="separator" style="font-size: 30px;">ANNOUNCEMENTS</div><br><br>';
 	$sql2 = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT 3";
 	$result2 = DB::query($sql2);
 	echo '<div class="container"><div class="row">';
@@ -93,7 +92,7 @@ if (Session::exist('noUserReg')) {
 				</div>';
 	}
 	echo '</div></div><br><center><a href="/GapanCity">See all announcements</a></center>';
-	echo '<br><br><div class="separator">NEWS</div><br><br>';
+	echo '<br><br><div class="separator" style="font-size: 30px;">NEWS</div><br><br>';
 	$sql = "SELECT * FROM news ORDER BY id DESC LIMIT 1";
 	$result = DB::query($sql)->fetch();
 	if (!empty($result)) {
@@ -143,7 +142,7 @@ if (Session::exist('noUserReg')) {
 	<br>
 	<br>
 	<br>		
-	<div class="separator">EVENTS</div>
+	<div class="separator" style="font-size: 30px;">EVENTS</div>
 	<br>
 	<br>';
 
