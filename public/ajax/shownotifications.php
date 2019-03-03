@@ -20,8 +20,13 @@ if (Input::exist() && !empty(Input::get('postgetnotifications'))) {
 					$photo = DB::query($sql3, [], true, ['postid' => $row['link_id']])->fetch();
 					$sql4 = "SELECT u_title, u_post FROM user_post WHERE id = :id";
 					$upost = DB::query($sql4, [], true, ['id' => $row['link_id']])->fetch();
-					$output .= '<a class="dropdown-item" href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><div class="row"><div class="col-3"><img class="imgsmall rounded-circle my-auto" src="/user_photos/'.$photo['u_postphoto'].'"></div>';
-					$output .= '<div class="col-9 m-0 p-0">Your post is approved<br>';
+					$output .= '<a class="dropdown-item" href="/user/'.Session::get('u_sess_username').'/'.$row['linkto'].'/'.$row['link_id'].'"><div class="row">';
+					if (!empty($photo['u_postphoto'])) {
+						$output .= '<div class="col-3"><img class="imgsmall rounded-circle my-auto" src="/user_photos/'.$photo['u_postphoto'].'"></div>';
+						$output .= '<div class="col-9 m-0 p-0">Your post is approved<br>';
+					} else {
+						$output .= '<div class="col-12">Your post is approved<br>';
+					}
 					$output .= $upost['u_title'].'<br>'.$upost['u_post'].'<br>';
 				}
 			} elseif ($row['notif_from'] == 'user') {
@@ -89,8 +94,13 @@ if (Input::exist() && !empty(Input::get('postgetnotifications'))) {
 					$photo = DB::query($sql3, [], true, ['postid' => $row['b_link_id']])->fetch();
 					$sql4 = "SELECT b_title, b_post FROM store_post WHERE id = :id";
 					$bpost = DB::query($sql4, [], true, ['id' => $row['b_link_id']])->fetch();
-					$output .= '<a class="dropdown-item" href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><div class="row"><div class="col-3"><img class="imgsmall" src="/business_photos/'.$photo['b_postphoto'].'"></div>';
-					$output .= '<div class="col-9">Your post is approved<br>';
+					$output .= '<a class="dropdown-item" href="/business/'.Session::get('b_sess_b_username').'/'.$row['b_linkto'].'/'.$row['b_link_id'].'"><div class="row">';
+					if (!empty($photo['b_postphoto'])) {
+						$output .= '<div class="col-3"><img class="imgsmall" src="/business_photos/'.$photo['b_postphoto'].'"></div>';
+						$output .= '<div class="col-9">Your post is approved<br>';
+					} else {
+						$output .= '<div class="col-12">Your post is approved<br>';
+					}
 					$output .= $bpost['b_title'].'<br>'.$bpost['b_post'].'<br>';
 				}
 			}

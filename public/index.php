@@ -53,7 +53,7 @@ if (Session::exist('noUserReg')) {
 	<h2 class="p-3"><center>City Mayor's Message</center></h2>
 	<div class="row flex-sm-row-reverse">
 		<div class="col-sm-9">
-			<p style="font-family:arial; font-size:15pt" align="justify">Welcome to the official website of Gapan City!<br><br>
+			<p style="font-family:arial; font-size:15pt" align="justify">Welcome to the website of Gapan City!<br><br>
 					Through this website, the City Government of Gapan would like to report its accomplishments. As public servants, we are accountable to the public and it is our obligation to inform them of what we are doing. This is also our way of implementing the principle of transparency which is one ingredient of good governance.<br>
 					<br>
 					I encourage all the citizens of Gapan to read the website and provide us with your constructive suggestions and recommendations so that we can further improve our performance as public servants of our city.<br>
