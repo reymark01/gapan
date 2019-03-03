@@ -1,14 +1,64 @@
 <?php
 require_once '../pusher/vendor/autoload.php';
 require_once '../../app/core/newinit.php';
-?>
 
+if (!Session::exist('admin_sess_id')) {
+  Redirect::to('/');
+}
+
+if (Input::exist()) {
+  if (Token::check('eventsPostToken', Input::get('token'))) {
+    $validate = new Validate;
+    $validation = $validate->check($_POST, array(
+      'title' => array(
+        'required' => true
+      ),
+      'file' => array(
+        'ftype' => array('jpg', 'jpeg', 'png')
+      )
+    ));
+    if ($validation->passed()) {
+      if (!empty($_FILES['file']['name'])) {
+        $key = Token::uniqKey('events', 'events_thumbnail');
+        $tmp_name = $_FILES['file']['tmp_name'];
+        $eventsphotos = '../events_thumbnail/'.$key;
+      } else {
+        $key = 'default';
+      }
+      $sql = "INSERT INTO events (events_title, events_post, events_thumbnail) VALUES (:title, :post, :postphoto)";
+      if (DB::query($sql, ['title' => Input::get('title'), 'post' => Input::get('body'), 'postphoto' => $key])) {
+        $res = DB::query("SELECT id FROM events ORDER BY id DESC LIMIT 1")->fetch();
+        if (!empty($_FILES['file']['name'])) {
+          move_uploaded_file($tmp_name, $eventsphotos);
+        }
+        $sql2 = "SELECT id FROM users WHERE account_verified = 1";
+        $results = DB::query($sql2);
+        while($row = $results->fetch()) {
+          DB::query("INSERT INTO user_notification (user_id, link, link_id) VALUES (:user_id, 'event', :link_id)", [], true, ['user_id' => $row['id'], 'link_id' => $res['id']]);
+        }
+        $options = array(
+            'cluster' => 'ap1',
+            'useTLS' => true
+          );
+          $pusher = new Pusher\Pusher(
+            'be49c320ccd26cd0faa2',
+            '27e2b94390ec18ab305d',
+            '681832',
+            $options
+          );
+        $pusher->trigger('addNotifChannel', 'addNotifEvent', ['count' => 1]);
+        Session::flash('eventsPostSuc', 'Success');
+      }
+    }
+  }
+}
+?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Gapan City Website</title>
+    <title>Admin Dashboard</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -29,7 +79,7 @@ require_once '../../app/core/newinit.php';
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="shortcut icon" href="/image/seal.png">
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
@@ -42,7 +92,7 @@ require_once '../../app/core/newinit.php';
         <div class="sidenav-header d-flex align-items-center justify-content-center">
           <!-- User Info-->
           <div class="sidenav-header-inner text-center"><img src="img/avatar-7.jpg" alt="person" class="img-fluid rounded-circle">
-            <h2 class="h5">Admin 1</h2><span>Admin Dashboard</span>
+            <h2><?=Session::get('admin_sess_username')?></h2><span>Admin Dashboard</span>
           </div>
           <!-- Small Brand information, appears on minimized sidebar-->
           <div class="sidenav-header-logo"><a href="index.html" class="brand-small text-center"> <strong>A</strong><strong class="text-primary">D</strong></a></div>
@@ -81,57 +131,7 @@ require_once '../../app/core/newinit.php';
       <div class="container">
           <div class="row">
                     <!--col -->
-                   <?php
-if (!Session::exist('admin_sess_id')) {
-	Redirect::to('../');
-}
-
-if (Input::exist()) {
-	if (Token::check('eventsPostToken', Input::get('token'))) {
-		$validate = new Validate;
-		$validation = $validate->check($_POST, array(
-			'title' => array(
-				'required' => true
-			),
-			'file' => array(
-				'ftype' => array('jpg', 'jpeg', 'png')
-			)
-		));
-		if ($validation->passed()) {
-			if (!empty($_FILES['file']['name'])) {
-				$key = Token::uniqKey('events', 'events_thumbnail');
-				$tmp_name = $_FILES['file']['tmp_name'];
-				$eventsphotos = '../events_thumbnail/'.$key;
-			} else {
-				$key = 'default';
-			}
-			$sql = "INSERT INTO events (events_title, events_post, events_thumbnail) VALUES (:title, :post, :postphoto)";
-			if (DB::query($sql, ['title' => Input::get('title'), 'post' => Input::get('body'), 'postphoto' => $key])) {
-				$res = DB::query("SELECT id FROM events ORDER BY id DESC LIMIT 1")->fetch();
-				if (!empty($_FILES['file']['name'])) {
-					move_uploaded_file($tmp_name, $eventsphotos);
-				}
-				$sql2 = "SELECT id FROM users WHERE account_verified = 1";
-				$results = DB::query($sql2);
-				while($row = $results->fetch()) {
-					DB::query("INSERT INTO user_notification (user_id, link, link_id) VALUES (:user_id, 'event', :link_id)", [], true, ['user_id' => $row['id'], 'link_id' => $res['id']]);
-				}
-				$options = array(
-			    	'cluster' => 'ap1',
-			    	'useTLS' => true
-			    );
-			  	$pusher = new Pusher\Pusher(
-			    	'be49c320ccd26cd0faa2',
-			    	'27e2b94390ec18ab305d',
-			    	'681832',
-			    	$options
-			  	);
-				$pusher->trigger('addNotifChannel', 'addNotifEvent', ['count' => 1]);
-				Session::flash('eventsPostSuc', 'Success');
-			}
-		}
-	}
-}
+<?php
 if (Session::exist('eventsPostSuc')) {
 	echo '<div class="alert alert-success">'.Session::flash('eventsPostSuc').'</div>';
 }

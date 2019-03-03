@@ -7,14 +7,27 @@ if (isset($_GET['id'])) {
 	$sql = "SELECT * FROM events WHERE id = :id";
 	$result = DB::query($sql, [], true, ['id' => $id])->fetch();
 	if (!empty($result)) {
-		echo '<div class="container">
-		<h3>'.$result['events_title'].'</h3>
-		<p><small class="text-muted">'.Validate::formatDate($result['events_postdate']).'</small></p><hr>';
-		if ($result['events_thumbnail'] != 'default') {
-			echo '<img class="image img-thumbnail" src="/events_thumbnail/'.$result['events_thumbnail'].'"><hr>';
-		}
-		echo '<p>'.$result['events_post'].'</p>
-		</div>';
+		echo '<div class="container p-4">
+				<div class="card">
+					<div class="card-header bg-primary">
+						<img src="/image/seal.png" style="height: 100px;width: 100px;">
+						<h4 style="color:white;">Gapan City</h4>
+						<h4 style="color:white;">Event</h4>
+					</div>
+					<div class="card">
+						<div class="card-header" style="background-color:white;">
+							<h3>'.$result['events_title'].'</h3>
+							<p><small class="text-muted">'.Validate::formatDate($result['events_postdate']).'</small></p>';
+							if ($result['events_thumbnail'] != 'default') {
+								echo '<img class="image img-thumbnail" src="/events_thumbnail/'.$result['events_thumbnail'].'">';
+							}
+					echo '</div>
+						<div class="card-body">
+							<p>'.$result['events_post'].'</p>
+						</div>
+					</div>
+				</div>
+			</div>';
 	} else {
 		Redirect::to('../events');
 	}

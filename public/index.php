@@ -26,13 +26,13 @@ if (Session::exist('noUserReg')) {
 	</ol>
 	<div class="carousel-inner">
 		<div class="carousel-item active">
-			<img src="image/1.jpg" class="carousel-img" alt="First slide">
+			<img src="image/1.png" class="carousel-img" alt="First slide">
 		</div>
 		<div class="carousel-item">	
 			<img src="image/2.jpg" class="carousel-img" alt="Second slide">
 		</div>
 		<div class="carousel-item">
-			<img src="image/3.jpg" class="carousel-img" alt="Third slide">
+			<img src="image/3.png" class="carousel-img" alt="Third slide">
 		</div>
 		<div class="carousel-item">
 			<img src="image/4.jpg" class="carousel-img"alt="Fourth slide">
@@ -92,7 +92,7 @@ if (Session::exist('noUserReg')) {
 					</a>
 				</div>';
 	}
-	echo '</div></div>';
+	echo '</div></div><br><center><a href="/GapanCity">See all announcements</a></center>';
 	echo '<br><br><div class="separator">NEWS</div><br><br>';
 	$sql = "SELECT * FROM news ORDER BY id DESC LIMIT 1";
 	$result = DB::query($sql)->fetch();
@@ -118,7 +118,7 @@ if (Session::exist('noUserReg')) {
 			</div>
 		</a><br><br><br><br>';
 	}
-	echo '<div class="container-fluid">
+	echo '<div class="container">
 			<div class="row">';
 				$sql = "SELECT * FROM news ORDER BY id DESC LIMIT 1, 3";
 				$results = DB::query($sql);
@@ -128,7 +128,7 @@ if (Session::exist('noUserReg')) {
 						<div class="card">
 							<img class="card-img-top" src="/news_thumbnail/'.$row['news_thumbnail'].'">
    							<div class="card-body">
-								<h5 class="card-title">'.$row['news_title'].'</h5>
+								<h6 class="card-title">'.$row['news_title'].'</h6>
 								<small class="text-muted">'.Validate::formatDate($row['news_postdate']).'</small>
 							</div>
 						</div>

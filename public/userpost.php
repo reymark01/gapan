@@ -6,7 +6,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 	$result = DB::query("SELECT id FROM users WHERE account_verified = 1 AND username = :username", ['username' => Input::get('username')])->fetch();
 		if (!empty($result)) {
 			if (Input::get('tab') == 'post') {
-			$sql = "SELECT user_post.id as postid, fname, lname, username, profile, u_title, u_postprice, u_post, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_post.user_id = :uid AND user_post.id = :id";
+			$sql = "SELECT user_post.id as postid, fname, lname, username, profile, u_title, u_postprice, u_post, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_post.u_poststatus != 2 AND user_post.user_id = :uid AND user_post.id = :id";
 			$row = DB::query($sql, [], true, ['id' => Input::get('pid'), 'uid' => $result['id'], 'veri' => 1])->fetch();
 			$sql2 = "SELECT u_postphoto FROM user_post_photos WHERE user_post_id = :postid";
 			$result = DB::query($sql2, [], true, ['postid' => $row['postid']]);

@@ -2,13 +2,13 @@
 require_once '../../app/core/newinit.php';
 require_once '../layout/header.php';
 ?>
-<div class="container">
+<div class="container p-4">
 	<div class="row">
-		<div class="col-sm-3"></div>
-		<div class="col-sm-4 p-4">
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4">
 			<form action="/businesses/search" class="form-inline my-lg-0" method="get">
-				<div class="input-group px-5 mx-5">
-					<input class="form-control" name="q" type="search" placeholder="Search User" aria-label="Search" style="width:250px">
+				<div class="input-group">
+					<input class="form-control" name="q" type="search" placeholder="Search Business" aria-label="Search" style="width:250px">
 					<div class="input-group-append">
 						<button class="btn btn-primary" type="submit">
 							<span class="fas fa-search"></span>
@@ -17,6 +17,7 @@ require_once '../layout/header.php';
 				</div>
 			</form>
 		</div>
+		<div class="col-sm-4"></div>
 	</div>
 </div>
 <div class="container">
@@ -33,8 +34,8 @@ function renderBusinesses(element,data) {
 	data.map((item,i)=>{
 		let col = $("<div class='col-sm-4 p-2'>");
 		let card = $("<div class='card' style='border-radius:0;'>");
-		let cardHeader = $('<a href="'+item.link+'" class="card-header searchcontainer searchlink"></a>');
-		let profile = $('<img class="imgsmall rounded-circle" src="'+item.profile+'">');
+		let cardHeader = $('<a href="'+item.link+'" class="card-header searchcontainer searchlink" style="background-color:white;"></a>');
+		let profile = $('<img class="rounded-circle" src="'+item.profile+'" style="height:100px;width:100px;">');
 		let rate = $('<div>'+item.rate+'</div>');
 		let avg = $('<div><small class="text-muted">'+item.avg+'</small></div>');
 		let name = $('<p class="m-0"><b>'+item.name+'</b></p><br>');

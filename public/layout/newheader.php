@@ -55,7 +55,9 @@
 					<li class="nav-item">
 						<a class="nav-link" href="/businesses">Businesses</a>
 					</li>
-					
+	
+				</ul>
+				<ul class="navbar-nav">
 					<li class="nav-item">
 						<form action="/search" class="form-inline my-2 my-lg-0" method="get">
 							<div class="input-group">
@@ -68,8 +70,6 @@
 							</div>
 						</form>
 					</li>
-				</ul>
-				<ul class="navbar-nav">
 <?php
 				if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 ?>
@@ -77,7 +77,7 @@
 					<a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fas fa-bell"></i><sup><span class="badge badge-pill badge-danger notif-count"></span></sup>
 					</a>
-					<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:310px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
+					<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:300px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
 					</li>
 <?php
 				} elseif (Session::exist('admin_sess_id')) {

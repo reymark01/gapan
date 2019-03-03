@@ -14,4 +14,6 @@ if (Session::exist('admin_sess_id')) {
 			echo $result['count(*)'];
 		}
 	}
+} else {
+	Redirect::to('/');
 }

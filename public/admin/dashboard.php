@@ -45,7 +45,7 @@ if (!Session::exist('admin_sess_id')) {
         <div class="sidenav-header d-flex align-items-center justify-content-center">
           <!-- User Info-->
           <div class="sidenav-header-inner text-center"><img src="/image/seal.png" alt="person" class="img-fluid rounded-circle">
-            <h2 class="h5">Admin 1</h2><span>Admin Dashboard</span>
+            <h2><?=Session::get('admin_sess_username')?></h2><span>Admin Dashboard</span>
           </div>
           <!-- Small Brand information, appears on minimized sidebar-->
           <div class="sidenav-header-logo"><a href="dashboard" class="brand-small text-center"><strong><img src="/image/seal.png"></strong></a></div>

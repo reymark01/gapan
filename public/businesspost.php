@@ -5,7 +5,7 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 	$result = DB::query("SELECT id FROM stores WHERE b_account_verified = :one AND b_username = :username", ['username' => Input::get('username')], true, ['one' => 1])->fetch();
 		if (!empty($result)) {
 			if (Input::get('tab') == 'post') {
-			$sql = "SELECT store_post.id as postid, b_name, b_username, b_profile, b_post, b_postdate FROM stores, store_post WHERE stores.id = store_post.store_id AND store_post.store_id = :bid AND store_post.id = :id";
+			$sql = "SELECT store_post.id as postid, b_name, b_username, b_profile, b_title, b_postprice, b_post, b_postdate FROM stores, store_post WHERE stores.id = store_post.store_id AND store_post.b_poststatus != 2 AND store_post.b_postverified = 1 AND store_post.store_id = :bid AND store_post.id = :id";
 			$row = DB::query($sql, [], true, ['id' => Input::get('pid'), 'bid' => $result['id']])->fetch();
 			$sql2 = "SELECT * FROM store_post_photos WHERE store_post_id = :postid";
 			$result = DB::query($sql2, [], true, ['postid' => $row['postid']]);
@@ -49,7 +49,9 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 						</div>
 					</div>
 <?php
-			} 
+			} else {
+				Redirect::to('/business/'.Input::get('username').'');
+			}
 		} elseif (Input::get('tab') == 'wallpost') {
 			$sql = "SELECT store_wall_post.id as postid, b_name, b_username, b_profile, bw_post, bw_postdate FROM stores, store_wall_post WHERE stores.id = store_wall_post.store_id AND store_wall_post.store_id = :bid AND store_wall_post.id = :id";
 			$row = DB::query($sql, [], true, ['id' => Input::get('pid'), 'bid' => $result['id']])->fetch();
@@ -93,6 +95,8 @@ if (!empty(Input::get('username') && !empty(Input::get('tab') && !empty(Input::g
 						</div>
 					</div>
 <?php
+			} else {
+				Redirect::to('/business/'.Input::get('username').'');
 			}
 		}
 	}

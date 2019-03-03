@@ -24,11 +24,12 @@ if (Input::exist()) {
 				Session::flash('logFail', 'Login Failed');
 			}
 		} 	else {
-			$sql = "SELECT id, a_password FROM admins WHERE a_username = :username";
+			$sql = "SELECT id, a_username, a_password FROM admins WHERE a_username = :username";
 			$result = DB::query($sql, ['username' => Input::get('username')])->fetch();
 			if (isset($result) && !empty($result)) {
 				if (password_verify(Input::get('password'), $result['a_password'])) {
 					Session::create('admin_sess_id', $result['id']);
+					Session::create('admin_sess_username', $result['a_username']);
 					Redirect::to('admin/dashboard');
 				} else {
 					Session::flash('logFail', 'Login Failed');

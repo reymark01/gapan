@@ -10,11 +10,11 @@ if (!empty(Input::get('username')) && !empty(Input::get('tab')) && Input::get('t
 ?>
 		<div class="container p-3">
 			<div class="card">
-			<div class="card-header">
+			<div class="card-header bg-primary">
 				<a href="/business/<?=$result['b_username']?>" style="color:black;text-decoration: none;"><img class="rounded-circle" src="/business_profiles/<?=$result['b_profile']?>" style="width: 100px;height: 100px;">
-				<h3><?=$result['b_name']?></h3></a>
+				<h3 style="color: white;"><?=$result['b_name']?></h3></a>
 				<br>
-				<h4>Offers List</h4>
+				<h4 style="color: white;">Offers List</h4>
 			</div>
 			<div class="card-body">
 			<div class="row">

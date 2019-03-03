@@ -11,10 +11,10 @@ require_once 'layout/header.php';
 ?>
 <div class="container p-4">
 	<div class="card">
-		<div class="card-header">
+		<div class="card-header bg-primary">
 			<img src="/image/seal.png" style="height: 100px;width: 100px;">
-			<h4>Gapan City</h4>
-			<h4>Announcements</h4>
+			<h4 style="color:white;">Gapan City</h4>
+			<h4 style="color:white;">Announcements</h4>
 		</div>
 <?php
 $sql = "SELECT * FROM gapan_post ORDER BY id DESC LIMIT :lim";

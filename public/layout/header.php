@@ -14,7 +14,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
 <div class="container-fluid">
-<a class="navbar-brand toplogo" href="/GapanCity"><img src="/image/seal.png" class="img-responsive" alt="logo">Gapan City</a>
+<a class="navbar-brand toplogo" href="/"><img src="/image/seal.png" class="img-responsive" alt="logo">Gapan City</a>
 
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 <span class="navbar-toggler-icon"></span><sup class="badge badge-pill badge-danger notif-count" style="font-size: 13px;"></sup>
@@ -54,9 +54,11 @@
 	<a class="nav-link" href="/faq">FAQ</a>
 </li>
 
-<li class="nav-item">
+</ul>
+<ul class="navbar-nav">
+	<li class="nav-item">
 	<form action="/search" class="form-inline my-lg-0" method="get">
-		<div class="input-group ml-5">
+		<div class="input-group">
 			<input class="form-control" name="q" type="search" placeholder="Search" aria-label="Search" style="width:250px">
 			<div class="input-group-append">
 				<button class="btn btn-outline-light my-2 my-sm-0" type="submit">
@@ -66,8 +68,6 @@
 		</div>
 	</form>
 </li>
-</ul>
-<ul class="navbar-nav">
 <?php
 if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 ?>
@@ -75,7 +75,7 @@ if (Session::exist('u_sess_id') || Session::exist('b_sess_id')) {
 <a href="#" class="btn btn-primary dropdown-toggle notif-dropdown" id="notifdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 <i class="fas fa-bell"></i><sup><span class="badge badge-pill badge-danger notif-count"></span></sup>
 </a>
-<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:310px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
+<div class="dropdown-menu dropdown-menu-right notif-menu" style="max-height: 400px; width:300px;overflow-y: scroll;" aria-labelledby="notifdropdown"><div class="notiflist"></div><a href="#" class="seemorenotif d-block text-center">See more</a></div>
 </li>
 <?php
 } elseif (Session::exist('admin_sess_id')) {
