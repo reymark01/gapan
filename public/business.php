@@ -673,6 +673,7 @@ if (!empty(Input::get('username'))) {
 									    </div>
 									  </div>
 									</div>
+								</div>
 <?php
 									}
 ?>
