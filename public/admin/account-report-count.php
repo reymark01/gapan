@@ -4,8 +4,8 @@ require_once "../../app/core/newinit.php";
 if (Session::exist('admin_sess_id')) {
 	if (Input::exist()) {
 		if (!empty(Input::get('breport'))) {
-			$sql = "SELECT count(*) FROM stores WHERE b_report >= :rep";
-			$result = DB::query($sql, [], true, ['rep' => 5])->fetch();
+			$sql = "SELECT count(*) FROM stores WHERE b_report > 0";
+			$result = DB::query($sql)->fetch();
 			echo $result['count(*)'];
 		}
 		elseif (!empty(Input::get('ureport'))) {

@@ -14,6 +14,9 @@ if (Input::exist()) {
 			'price' => array(
 				'required' => true,
 				'pregmatch' => 'e'
+			),
+			'qty' => array(
+				'pregmatch' => 'c'
 			)
 		));
 		if (Session::exist('u_sess_id')) {
@@ -81,8 +84,8 @@ if (Input::exist()) {
 						}
 					}
 				}
-				$sql = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice) VALUES (:id, :title, :post, :postprice)";
-				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id')])) {
+				$sql = "INSERT INTO store_post (store_id, b_title, b_post, 	b_postprice, b_postqty) VALUES (:id, :title, :post, :postprice, :qty)";
+				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id'), 'qty' => Input::get('qty')])) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();
@@ -101,7 +104,11 @@ if (Input::exist()) {
 				$errors = '';
 				foreach($validation->errors() as $err) {
 					foreach($err as $field => $error) {
-						$errors .= 'Image '.$error.'<br>';
+						if ($field == 'file') {
+							$errors .= 'Image '.$error.'<br>';
+						} elseif ($field == 'qty') {
+							$errors .= 'Quantity '.$error.'! Only numbers are accepted<br>';
+						}
 					}
 				}
 				Session::flash('postFail', $errors);
@@ -128,6 +135,8 @@ if (Session::exist('postSuc')) {
 			<label>Description</label><textarea class="form-control" name="post" placeholder="Description"></textarea><br>
 			<label>Price</label><br>
 			<input class="form-control" type="text" name="price" placeholder="Price"><br>
+			<label>Quantity<sup>(Optional)</sup></label><br>
+			<input class="form-control" type="text" name="qty" placeholder="Quantity"><br>
 			<input type="file" name="file[]" multiple>
 			<input type="hidden" name="token" value="<?php echo Token::generate('uPostToken'); ?>">
 			<button type="submit" class="btn btn-primary btn-sm" style="float: right;">Submit Post</button>

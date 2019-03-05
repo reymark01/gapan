@@ -25,7 +25,6 @@ if (Input::exist()) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome CSS-->
     <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
     <!-- Fontastic Custom icon font-->
@@ -39,7 +38,9 @@ if (Input::exist()) {
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="/css/style.css">
     <!-- Favicon-->
     <link rel="shortcut icon" href="/image/seal.png">
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
@@ -93,28 +94,46 @@ if (Input::exist()) {
         </nav>
       </header>
       <!-- Counts Section -->
-      <div class="container-fluid">
+      <div class="container p-5">
           <div class="row">
 <?php
-$sql2 = "SELECT * FROM stores WHERE b_report >= :report";
-$results =  DB::query($sql2, [], true, ['report' => 5]);
+$sql2 = "SELECT id, b_username, b_profile, b_name FROM stores WHERE b_report > 0 ORDER BY b_report DESC";
+$results =  DB::query($sql2);
 while ($row = $results->fetch()) {
-  echo '     <div class="col-sm-4">
-            <div class="card" style="margin: 15px; ">
-              <div class="card-body">
+  $sql3 = "SELECT profile, username, lname, fname, reporttext FROM store_report, users WHERE store_report.user_id = users.id AND store_report.store_id = :storeid";
+  $qwe = DB::query($sql3, [], true, ['storeid' => $row['id']]);
+  echo '<div class="col-sm-4">
+          <div class="card">
+            <div class="card-header d-flex justify-content-center">
+              <a href="/business/'.$row['b_username'].'">
+                  <img class="rounded-circle" src="/business_profiles/'.$row['b_profile'].'" style="height:75px;width:75px;"><br>
+                  <h4>'.$row['b_name'].'</h4>
+              </a>
+            </div>
+            <div class="card-body">';
+                while ($row2 = $qwe->fetch()) {
+                  echo '<div class="container">
+                         <a href="/user/'.$row2['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row2['profile'].'">
+                          '.$row2['fname'].' '.$row2['lname'].'</a>
+                         <div class="row">
+                          <div class="col-sm-2"></div>
+                          <div class="col-sm-10">
+                            <p class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row2['reporttext'])).'</p>
+                          </div>
+                         </div>
+                         <hr>
+                        </div>';
+                }
+        echo '</div>
+              <div class="card-footer">
                 <form action="" method="post">
-                <a href="#">
-                  <img src="/business_profiles/'.$row['b_profile'].'" style="height:200px; width:250px;"><br>
-                  Business Name: '.$row['b_name'].'<br>
-                  Username: '.$row['b_username'].'<br>
-                  E-mail: '.$row['b_email'].'<br>
-                  Contact No.: '.$row['b_contact'].'</a><br>
                   <input type="hidden" name="id" value="'.$row['id'].'">
                   <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>
-                  <button type="submit" class="btn btn-primary" name="reset" value="reset">Reset reports</button>
-                </form></div>
+                  <button type="submit" class="btn btn-primary float-right" name="reset" value="reset">Reset reports</button>
+                </form>
               </div>
-            </div>';
+          </div>
+        </div>';
 }
 ?>
         </div>

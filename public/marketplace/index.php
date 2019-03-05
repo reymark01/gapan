@@ -58,11 +58,15 @@ require_once '../layout/header.php';
 			let postdate = $('<small class="m-0 text-muted">'+item.postdate+'</small>');
 			let title = $("<div><b>"+item.title+"</b></div><br>");
 			let price = $('<div><span class="badge badge-pill badge-success" style="background-color:#53d690;color:black;font-size:15px;">Price</span> ₱'+item.price+'</div><br>');
+			let quantity = $('<div><span class="badge badge-pill badge-danger" style="background-color:#53d690;color:black;font-size:15px;">Quantity</span> '+item.qty+'</div><br>');
 			let postImage = $("<img class='img-thumbnail' src='"+item.image+"' style='width: 250px; height: 250px;'>");
 			cardHeader.append(image);
 			cardHeader.append(name);
 			cardHeader.append(postdate);
 			cardBody.append(title);
+			if (item.qty > 0) {
+				cardBody.append(quantity);
+			}
 			cardBody.append(price);
 			cardBody.append(postImage);
 			card.append(cardHeader)

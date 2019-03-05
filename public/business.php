@@ -14,6 +14,7 @@ if (Input::exist()) {
 				'pregmatch' => 'e'
 			),
 			'file' => array(
+				'required' => true,
 				'ftype' => array('jpg', 'jpeg', 'png')
 			)
 		));
@@ -25,18 +26,26 @@ if (Input::exist()) {
 			} else {
 				$key = '';
 			}
-			$sql = "INSERT INTO store_products (store_id, product_name, product_price, product_photo) VALUES (:id, :name, :price, :photo)";
-			if (DB::query($sql, ['name' => Input::get('name'), 'price' => Input::get('price'), 'photo' => $key], true, ['id' => Session::get('b_sess_id')])) {
+			$sql = "INSERT INTO store_products (store_id, product_name, product_desc, product_price, product_photo) VALUES (:id, :name, :pdesc, :price, :photo)";
+			if (DB::query($sql, ['name' => Input::get('name'), 'price' => Input::get('price'), 'photo' => $key, 'pdesc' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id')])) {
 				if (!empty($_FILES['file']['name'])) {
 					move_uploaded_file($tmp_name, $productsphoto);
+					if (!empty(Input::get('mpcheckbox'))) {
+						$sql2 = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice) VALUES (:id, :title, :post, :postprice)";
+						if (DB::query($sql2, ['title' => htmlspecialchars(Input::get('name')), 'post' => htmlspecialchars(Input::get('post')), 'postprice' => htmlspecialchars(Input::get('price'))], true, ['id' => Session::get('b_sess_id')])) {
+							$sql3 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT 1";
+							$postid = DB::query($sql3, [], true, ['id' => Session::get('b_sess_id')])->fetch();
+							$key2 = Token::uniqKey('store_post_photos', 'b_postphotos');
+							$postphoto = 'business_photos/'.$key2;
+							$sql4 = "INSERT INTO store_post_photos (store_post_id, b_postphoto) VALUES (:postid, :key)";
+							DB::query($sql4, ['key' => $key2], true, ['postid' => $postid['id']]);
+							copy($productsphoto, $postphoto);
+						}
+					}
 				}
 			}
 		} else {
 			$errors = '';
-				/*foreach($validation->errors() as $error) {
-					$errors .= $error.'<br>';
-				}
-				Session::flash('regFail', $errors);*/
 				foreach($validation->errors() as $err) {
 					foreach($err as $field => $error) {
 						if ($field == 'price') {
@@ -174,16 +183,35 @@ if (Input::exist()) {
 			}
 			$sql = "INSERT INTO store_wall_post (store_id, bw_post) VALUES (:id, :post)";
 			if (DB::query($sql, ['post' => htmlspecialchars(Input::get('post'))], true, ['id' => Session::get('b_sess_id')])) {
+				if (!empty(Input::get('mpcheckbox2'))) {
+					$sql4 = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice, b_postqty) VALUES (:id, :title, :post, :postprice, :qty)";
+					DB::query($sql4, ['title' => htmlspecialchars(Input::get('walltitle')), 'post' => htmlspecialchars(Input::get('post')), 'postprice' => htmlspecialchars(Input::get('wallprice'))], true, ['id' => Session::get('b_sess_id'), 'qty' => Input::get('wallqty')]);
+						/*$sql3 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id LIMIT 1";
+						$postid = DB::query($sql3, [], true, ['id' => Session::get('b_sess_id')])->fetch();
+						$sql4 = "INSERT INTO store_post_photos (store_post_id, b_postphoto) VALUES (:postid, :key)"
+						$key = Token::uniqKey('store_post_photos', 'b_postphotos');
+						$postphoto = 'business_photos/'.$key;
+						DB::query($sql4, ['key' => ], true, ['postid' => $postid['id']]);*/
+				}
 				if ($_FILES['file']['size'][0] > 0) {
 					$sql2 = "SELECT id FROM store_wall_post WHERE store_id = :id ORDER BY id DESC LIMIT :lim";
 					$postid = DB::query($sql2, [], true, ['id' => Session::get('b_sess_id'), 'lim' => 1])->fetch();
+					$sql5 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT 1";
+					$newid = DB::query($sql5, [], true, ['id' => Session::get('b_sess_id')])->fetch();
 					$files = Validate::arrangeArray($_FILES['file']);
 					for ($i=0; $i < count($files); $i++) {
 						$key = Token::uniqKey('store_wall_post_photos', 'bw_postphoto');
 						$photos = 'business_wall_photos/'.$key;
+						$key2 = Token::uniqKey('store_post_photos', 'b_postphoto');
+						$photos2 = 'business_photos/'.$key2;
 						move_uploaded_file($files[$i]['tmp_name'], $photos);
 						$sql3 = "INSERT INTO store_wall_post_photos (store_wall_post_id, bw_postphoto) VALUES (:postid, :key)";
 						DB::query($sql3, ['key' => $key], true, ['postid' => $postid['id']]);
+						if (!empty(Input::get('mpcheckbox2'))) {
+							$sql6 = "INSERT INTO store_post_photos (store_post_id, b_postphoto) VALUES (:mppostid, :newkey)";
+							DB::query($sql6, ['newkey' => $key2], true, ['mppostid' => $newid['id']]);
+							copy($photos, $photos2);
+						}
 					}
 				}
 			    /*$newpost = "SELECT store_wall_post.id as postid, b_name, b_username, b_profile, bw_post, bw_postdate FROM stores, store_wall_post WHERE stores.id = store_wall_post.store_id AND store_id = :id ORDER BY store_wall_post.id DESC LIMIT 1";
@@ -355,16 +383,19 @@ function renderReportModal($resultid, $bname){
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
+	      <form class="asd" id="reportBusinessForm">
 	      <div class="modal-body">
-	      	Are you sure you want to report <span style="font-weight: bold"><?=$bname?></span>?
+	      	<div class="container p-2">
+	      		Are you sure you want to report <span style="font-weight: bold"><?=$bname?></span>?<br><br>
+	      		<textarea id="reporttext" class="form-control" placeholder="Your Report"></textarea>
+	      	</div>
 	      </div>
 	      <div class="modal-footer">
-	      	<form id="reportBusinessForm">
 	      		<input type="hidden" id="breportid" value="<?=$resultid?>">
 	      		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	        	<button type="submit" name="reportbtn" class="btn btn-primary">Report</button>
-	        </form>
 	      </div>
+	      </form>
 	    </div>
 	  </div>
 	</div>
@@ -384,9 +415,9 @@ if (!empty(Input::get('username'))) {
 	$sql = "SELECT * FROM stores WHERE b_account_verified = 1 AND b_username = :username";
 	$result = DB::query($sql, ['username' => Input::get('username')])->fetch();
 	if (!empty($result)) {
-		$sql2 = "SELECT store_wall_post.id as wallpostid, NULL as postid, store_id as store_id, NULL as b_title, bw_post as b_post, NULL as b_postprice, bw_postdate as b_postdate, bw_postedited as b_postedited, NULL as b_poststatus, NULL as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_wall_post, stores WHERE store_wall_post.store_id = stores.id AND store_id = :id
+		$sql2 = "SELECT store_wall_post.id as wallpostid, NULL as postid, store_id as store_id, NULL as b_title, bw_post as b_post, NULL as b_postprice, NULL as b_postqty, bw_postdate as b_postdate, bw_postedited as b_postedited, NULL as b_poststatus, NULL as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_wall_post, stores WHERE store_wall_post.store_id = stores.id AND store_id = :id
 			UNION ALL
-			SELECT NULL as wallpostid, store_post.id as postid, store_id as store_id, b_title as b_title, b_post as b_post, b_postprice as b_postprice, b_postdate as b_postdate, b_postedited as b_postedited, b_poststatus as b_poststatus, b_postverified as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_post, stores WHERE store_post.store_id = stores.id AND store_id = :id AND  b_postverified = 1 AND b_poststatus != 2 ORDER BY b_postdate DESC LIMIT 0, 5";
+			SELECT NULL as wallpostid, store_post.id as postid, store_id as store_id, b_title as b_title, b_post as b_post, b_postprice as b_postprice, b_postqty as b_postqty, b_postdate as b_postdate, b_postedited as b_postedited, b_poststatus as b_poststatus, b_postverified as b_postverified, stores.b_name, stores.b_profile, stores.b_username FROM store_post, stores WHERE store_post.store_id = stores.id AND store_id = :id AND  b_postverified = 1 AND b_poststatus != 2 ORDER BY b_postdate DESC LIMIT 0, 5";
 		$res = DB::query($sql2, [], true, ['id' => $result['id']]);
 		while ($row = $res->fetch()) {
 			array_push($posts,$row);
@@ -548,6 +579,10 @@ if (!empty(Input::get('username'))) {
 ?>
 										<h3 class="b-posttitle"><?=$post['b_title']?></h3><br>
 										<ul class="template job-dt">
+											<li class="template"><a style="color:black; font-size: 15px;">Quantity</a></li>
+											<li class="template"><span class="b-postqty"><?=$post['b_postqty']?></span></li>
+										</ul>
+										<ul class="template job-dt">
 											<li class="template"><a style="color:black; font-size: 15px;">Price</a></li>
 											<li class="template">₱<span class="b-postprice"><?=$post['b_postprice']?></span></li>
 										</ul>
@@ -625,8 +660,10 @@ if (!empty(Input::get('username'))) {
 										<form id="addOfferForm" class="form-group" action="" method="post" enctype="multipart/form-data">
 										<input class="form-control" type="text" name="name" placeholder="Name"><br>
 										<input class="form-control" type="text" name="price" placeholder="Price"><br>
-										<input class="form-control" type="file" name="file">
-										</div>
+										<textarea class="form-control" name="post" placeholder="Description"></textarea><br>
+										<input class="form-control" type="file" name="file"><br>
+									    <input type="checkbox" id="exampleCheck1" name="mpcheckbox" value="mpcheckbox">
+									    <label for="exampleCheck1">Add in Marketplace</label>
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -738,14 +775,17 @@ if (!empty(Input::get('username'))) {
       </div>
       <div class="modal-body">
         <form action="" method="POST" class="form-group" enctype="multipart/form-data">
-			<div class="row">
-				<div class="col-lg-12 p-3">
+        	<div class="container">
+				<div class="row">
+					<input class="form-control" type="hidden" name="walltitle" id="walltitle" placeholder="Title">
+					<input class="form-control" type="hidden" name="wallprice" placeholder="Price" id="wallprice">
 					<textarea class="form-control" id="postText" name="post" placeholder="Your post"></textarea>
-				</div>
-				<div class="col-lg-12 p-3">
+					<input class="form-control" type="hidden" name="wallqty" id="wallqty" placeholder="Quantity">
 					<input class="form-control" type="file" name="file[]" multiple>
+					<input type="checkbox" id="exampleCheck2" name="mpcheckbox2" value="mpcheckbox">
+					<label for="exampleCheck2">Add in Marketplace</label>
+					<input type="hidden" name="token" value="<?=Token::generate('bPostToken')?>">
 				</div>
-				<input type="hidden" name="token" value="<?=Token::generate('bPostToken')?>">
 			</div>
       </div>
       <div class="modal-footer">
@@ -1347,18 +1387,25 @@ $(document).ready(function() {
 	$('body').on('submit', '#reportBusinessForm', function(e) {
 		e.preventDefault();
 		var id = $(this).find('#breportid').val();
-		$.ajax({
-			url: '/ajax/addreport.php',
-			method: 'post',
-			data: {
-				business: true,
-				storeid: id,
-			},
-			success: function(data) {
-				$('#reportBusinessModal').modal('hide');
-				$('#store-report-li').hide();
-			}
-		});
+		var report = $(this).find('#reporttext').val();
+		var trim = $.trim(report);
+	 	if (trim != '') {
+			$.ajax({
+				url: '/ajax/addreport.php',
+				method: 'post',
+				data: {
+					business: true,
+					storeid: id,
+					report: report
+				},
+				success: function(data) {
+					$('#reportBusinessModal').modal('hide');
+					$('#store-report-li').hide();
+				}
+			});
+		} else {
+			alert('Please specify your reason for reporting');
+		}
 	});
 	$('body').on('submit', '#rateBusinessForm', function(e) {
 		e.preventDefault();
@@ -1377,6 +1424,17 @@ $(document).ready(function() {
 				$('#ratingsModal').modal('hide');
 			}
 		});
+	});
+	$('body').on('change', '#exampleCheck2', function() {
+		if (this.checked) {
+			$('#walltitle').attr('type', 'text');
+			$('#wallprice').attr('type', 'text');
+			$('#wallqty').attr('type', 'text');
+		} else {
+			$('#walltitle').attr('type', 'hidden');
+			$('#wallprice').attr('type', 'hidden');
+			$('#wallqty').attr('type', 'hidden');
+		}
 	});
 	$('body').on('click', '#store-rate', function(e) {
 		e.preventDefault();
@@ -1409,6 +1467,7 @@ $(document).ready(function() {
 		editdiv.hide();
 		var postID = e.target.attributes[1].value;
 		var postpriceID = "price-"+postID;
+		var postqtyID = "qty-"+postID;
 		var postTextID  = "text-"+postID;
 		var postTitleID = "title-"+postID;
 		var editBtnID = "edit-"+postID;
@@ -1421,8 +1480,11 @@ $(document).ready(function() {
 		var bposttext = div.find('.b-post').html();
 		var bpostprice = div.find('.b-postprice');
 		var bpostpriceval = div.find('.b-postprice').html();
+		var bpostqty = div.find('.b-postqty');
+		var bpostqtyval = div.find('.b-postqty').html();
 		//bpostprice = replaceWith('<input type="text" value="'+bpostpriceval+'">');
 		bposttitle.replaceWith('<input class="edit-post-title form-control" id="'+postTitleID+'" form="edit-form" type="text" value="'+bposttitleval+'">');
+		bpostqty.replaceWith('<input class="edit-post-qty form-control" id="'+postqtyID+'"" form="edit-form" type="text" value="'+bpostqtyval+'">');
 		bpostprice.replaceWith('<input class="edit-post-price form-control" id="'+postpriceID+'"" form="edit-form" type="text" value="'+bpostpriceval+'">');
 		bpost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text form-control">'+bposttext+'</textarea>');
 		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
@@ -1432,6 +1494,7 @@ $(document).ready(function() {
 		$('body').on('click', '#'+editBtnID, function(e) {
 			e.preventDefault();
 			var editprice = $("#"+postpriceID).val();
+			var editqty = $("#"+postqtyID).val();
 			var edittext = $("#"+postTextID).val();
 			var edittitle = $("#"+postTitleID).val();
 			$.ajax({
@@ -1440,18 +1503,21 @@ $(document).ready(function() {
 				data:{
 					postid: postID,
 					edittitle: edittitle,
+					editqty: editqty,
 					edittext: edittext,
 					editprice: editprice
 				},
 				success: function(data) {
 					if (data == 'error') {
 						$("#"+postpriceID).replaceWith('<span class="b-postprice">'+bpostpriceval+'</span>');
+						$("#"+postqtyID).replaceWith('<span class="b-postqty">'+bpostqtyval+'</span>');
 						$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
 						$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+bposttitleval+'</h3>');
 						div.find('.edit-buttons').html('');
 						editdiv.show();
 					} else {
 						$("#"+postpriceID).replaceWith('<span class="b-postprice">'+editprice+'</span>');
+						$("#"+postqtyID).replaceWith('<span class="b-postqty">'+editqty+'</span>');
 						$("#"+postTextID).replaceWith('<p class="b-post">'+edittext+'</p>');
 						$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+edittitle+'</h3>');
 						div.find('.edit-buttons').html('');
@@ -1465,6 +1531,7 @@ $(document).ready(function() {
 		$('body').on('click', '#'+cancelBtnID, function(e){
 			e.preventDefault();
 			$("#"+postpriceID).replaceWith('<span class="b-postprice">'+bpostpriceval+'</span>');
+			$("#"+postqtyID).replaceWith('<span class="b-postqty">'+bpostqtyval+'</span>');
 			$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
 			$("#"+postTitleID).replaceWith('<h3 class="b-posttitle">'+bposttitleval+'</h3>');
 			div.find('.edit-buttons').html('');
