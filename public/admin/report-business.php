@@ -11,6 +11,8 @@ if (Input::exist()) {
   } elseif (!empty(Input::get('reset'))) {
     $sql = "UPDATE stores SET b_report = :zero WHERE id = :id";
     DB::query($sql, [], true, ['zero' => 0, 'id' => Input::get('id')]);
+    $sql2 = "DELETE FROM store_report WHERE store_id = :reportid";
+    DB::query($sql2, [], true, ['reportid' => Input::get('id')]);
   }
 }
 ?>
@@ -38,7 +40,7 @@ if (Input::exist()) {
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="/css/style.css">
     <!-- Favicon-->
@@ -100,11 +102,14 @@ if (Input::exist()) {
 $sql2 = "SELECT id, b_username, b_profile, b_name FROM stores WHERE b_report > 0 ORDER BY b_report DESC";
 $results =  DB::query($sql2);
 while ($row = $results->fetch()) {
+  $sql4 = "SELECT count(*) FROM store_report WHERE store_id = :store_id";
+  $count = DB::query($sql4, [], true, ['store_id' => $row['id']])->fetch();
   $sql3 = "SELECT profile, username, lname, fname, reporttext FROM store_report, users WHERE store_report.user_id = users.id AND store_report.store_id = :storeid";
   $qwe = DB::query($sql3, [], true, ['storeid' => $row['id']]);
   echo '<div class="col-sm-4">
           <div class="card">
-            <div class="card-header d-flex justify-content-center">
+            <div class="card-header">
+              <div><span class="badge badge-pill badge-danger float-left" style="font-size:15px;">'.$count['count(*)'].'</span></div><br>
               <a href="/business/'.$row['b_username'].'">
                   <img class="rounded-circle" src="/business_profiles/'.$row['b_profile'].'" style="height:75px;width:75px;"><br>
                   <h4>'.$row['b_name'].'</h4>

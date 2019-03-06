@@ -11,6 +11,9 @@ if (Input::exist()) {
 			'editprice' => array(
 				'required' => true,
 				'pregmatch' => 'e'
+			),
+			'editqty' => array(
+				'pregmatch' => 'c'
 			)
 		));
 		if($validation->passed()) {

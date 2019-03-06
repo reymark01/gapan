@@ -37,8 +37,8 @@ if (Input::exist()) {
 						}
 					}
 				}
-				$sql = "INSERT INTO user_post (user_id, u_title, u_post, u_postprice) VALUES (:user_id, :title, :post, :postprice)";
-				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['user_id' => Session::get('u_sess_id')])) {
+				$sql = "INSERT INTO user_post (user_id, u_title, u_post, u_postprice, u_postqty) VALUES (:user_id, :title, :post, :postprice, :qty)";
+				if (DB::query($sql, ['title' => htmlspecialchars(Input::get('title')), 'postprice' => Input::get('price'), 'post' => htmlspecialchars(Input::get('post'))], true, ['user_id' => Session::get('u_sess_id'), 'qty' => Input::get('qty')])) {
 					if ($_FILES['file']['size'][0] > 0) {
 						$sql2 = "SELECT id FROM user_post WHERE user_id = :id ORDER BY id DESC LIMIT :lim";
 						$postid = DB::query($sql2, [], true, ['id' => Session::get('u_sess_id'), 'lim' => 1])->fetch();

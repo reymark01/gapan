@@ -198,16 +198,17 @@ function renderReportModal($resultid, $fname, $lname){
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
+	      <form id="reportUserForm">
 	      <div class="modal-body">
-	      	Are you sure you want to report <span style="font-weight: bold"><?=$fname.' '.$lname?></span>?
+	      	Are you sure you want to report <span style="font-weight: bold"><?=$fname.' '.$lname?></span>?<br><br>
+	      	<textarea id="reporttext" class="form-control" placeholder="Your Report"></textarea>
 	      </div>
 	      <div class="modal-footer">
-	      	<form id="reportUserForm">
 	      		<input type="hidden" id="ureportid" value="<?=$resultid?>">
 	      		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	        	<button type="submit" name="reportbtn" class="btn btn-primary">Report</button>
-	        </form>
 	      </div>
+	      </form>
 	    </div>
 	  </div>
 	</div>
@@ -226,7 +227,7 @@ if (!empty(Input::get('username'))) {
 	$username = $_GET['username'];
 	$result = DB::query("SELECT * FROM users WHERE account_verified = 1 AND username = :username", ['username' => $username])->fetch();
 	if (!empty($result)) {
-		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, address, u_post, u_title, u_postprice, u_postedited, u_poststatus, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id AND u_poststatus != 2 ORDER BY user_post.id DESC LIMIT 0, 5";
+		$sql = "SELECT user_post.id as postid, fname, lname, username, profile, address, u_post, u_title, u_postprice, u_postqty, u_postedited, u_poststatus, u_postdate FROM users, user_post WHERE user_post.u_postverified = :veri AND users.id = user_post.user_id AND user_id = :id AND u_poststatus != 2 ORDER BY user_post.id DESC LIMIT 0, 5";
 		$res = DB::query($sql, [], true, ['id' => $result['id'], 'veri' => 1]);
 		while ($row = $res->fetch()) {
 				array_push($posts,$row);
@@ -337,6 +338,16 @@ if (!empty(Input::get('username'))) {
 										<form id="edit-form"></form>
 										<!--<h3>Senior Wordpress Developer</h3>-->
 										<h3 class="u-posttitle"><?=$post['u_title']?></h3><br>
+<?php
+									if ($post['u_postqty'] > 0) {
+?>
+										<ul class="template job-dt">
+											<li class="template"><a style="color:black; font-size: 15px;">Quantity</a></li>
+											<li class="template"><span class="u-postqty"><?=$post['u_postqty']?></span></li>
+										</ul>
+<?php
+									}
+?>
 										<ul class="template job-dt">
 											<li class="template"><a style="color:black; font-size: 15px;">Price</a></li>
 											<li class="template">₱<span class="u-postprice"><?=$post['u_postprice']?></span></li>
@@ -730,25 +741,33 @@ $(document).ready(function() {
 	$('body').on('submit', '#reportUserForm', function(e) {
 		e.preventDefault();
 		var id = $(this).find('#ureportid').val();
-		$.ajax({
-			url: '/ajax/addreport.php',
-			method: 'post',
-			data: {
-				user: true,
-				reportedid: id,
-			},
-			success: function(data) {
-				$('#reportUserModal').modal('hide');
-				$('#user-report-li').hide();
-			}
-		});
+		var report = $(this).find('#reporttext').val();
+		var trim = $.trim(report);
+	 	if (trim != '') {
+			$.ajax({
+				url: '/ajax/addreport.php',
+				method: 'post',
+				data: {
+					user: true,
+					reportedid: id,
+					report: report
+				},
+				success: function(data) {
+					$('#reportUserModal').modal('hide');
+					$('#user-report-li').hide();
+				}
+			});
+		} else {
+			alert('Please specify your reason for reporting');
+		}
 	});
 	$('body').on('click', '.edit-post', function(e) {
 		e.preventDefault();
 		var editdiv = $(this);
-		editdiv.hide();
 		var postID = e.target.attributes[1].value;
+		editdiv.hide();
 		var postpriceID = "price-"+postID;
+		var postqtyID = "qty-"+postID;
 		var postTextID  = "text-"+postID;
 		var postTitleID = "title-"+postID;
 		var editBtnID = "edit-"+postID;
@@ -761,17 +780,20 @@ $(document).ready(function() {
 		var uposttext = div.find('.u-post').html();
 		var upostprice = div.find('.u-postprice');
 		var upostpriceval = div.find('.u-postprice').html();
-		//bpostprice = replaceWith('<input type="text" value="'+bpostpriceval+'">');
+		var upostqty = div.find('.u-postqty');
+		var upostqtyval = div.find('.u-postqty').html();
 		uposttitle.replaceWith('<input class="edit-post-title form-control" id="'+postTitleID+'" form="edit-form" type="text" value="'+uposttitleval+'">');
+		upostqty.replaceWith('<input class="edit-post-qty form-control" id="'+postqtyID+'" form="edit-form" type="text" value="'+upostqtyval+'">');
 		upostprice.replaceWith('<input class="edit-post-price form-control" id="'+postpriceID+'" form="edit-form" type="text" value="'+upostpriceval+'">');
 		upost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text form-control">'+uposttext+'</textarea>');
-		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
+		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="button">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="button">Cancel</button></form>');
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');
 
 		$('body').on('click', '#'+editBtnID, function(e) {
 			e.preventDefault();
 			var editprice = $("#"+postpriceID).val();
+			var editqty = $("#"+postqtyID).val();
 			var edittext = $("#"+postTextID).val();
 			var edittitle = $("#"+postTitleID).val();
 			$.ajax({
@@ -781,17 +803,20 @@ $(document).ready(function() {
 					postid: postID,
 					edittitle: edittitle,
 					edittext: edittext,
-					editprice: editprice
+					editprice: editprice,
+					editqty: editqty
 				},
 				success: function(data) {
 					if (data == 'error') {
 						$("#"+postpriceID).replaceWith('<span class="u-postprice">'+upostpriceval+'</span>');
+						$("#"+postqtyID).replaceWith('<span class="u-postqty">'+upostqtyval+'</span>');
 						$("#"+postTextID).replaceWith('<p class="u-post">'+uposttext+'</p>');
 						$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+uposttitleval+'</h3>');
 						div.find('.edit-buttons').html('');
 						editdiv.show();
 					} else {
 						$("#"+postpriceID).replaceWith('<span class="u-postprice">'+editprice+'</span>');
+						$("#"+postqtyID).replaceWith('<span class="u-postqty">'+editqty+'</span>');
 						$("#"+postTextID).replaceWith('<p class="u-post">'+edittext+'</p>');
 						$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+edittitle+'</h3>');
 						div.find('.edit-buttons').html('');
@@ -805,6 +830,7 @@ $(document).ready(function() {
 		$('body').on('click', '#'+cancelBtnID, function(e) {
 			e.preventDefault();
 			$("#"+postpriceID).replaceWith('<span class="u-postprice">'+upostpriceval+'</span>');
+			$("#"+postqtyID).replaceWith('<span class="u-postqty">'+upostqtyval+'</span>');
 			$("#"+postTextID).replaceWith('<p class="u-post">'+uposttext+'</p>');
 			$("#"+postTitleID).replaceWith('<h3 class="u-posttitle">'+uposttitleval+'</h3>');
 			div.find('.edit-buttons').html('');

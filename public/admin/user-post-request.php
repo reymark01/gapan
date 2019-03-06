@@ -119,11 +119,15 @@ $results =  DB::query("SELECT * FROM user_post WHERE u_postverified = 0");
       <small class="text-muted"><?=Validate::formatDate($row['u_postdate'])?></small>
       <br>
       <br>
-      <?=$row['u_title']?><br>
-      <?=$row['u_postprice']?><br>
-      <?=$row['u_post']?><br>
-      <?php if (empty($photos)) {	 
-      echo 'No Image<br>';
+      Title: <?=$row['u_title']?><br>
+      Price: <?=$row['u_postprice']?><br>
+      Description: <?=$row['u_post']?><br>
+<?php 
+      if ($row['u_postqty'] > 0) {
+        echo 'Quantity: '.$row['u_postqty'];
+      }
+      if (empty($photos)) {	 
+        echo 'No Image<br>';
       } else {
         echo '<div class="row">';
         foreach($photos as $photo) {

@@ -9,8 +9,8 @@ if (Session::exist('admin_sess_id')) {
 			echo $result['count(*)'];
 		}
 		elseif (!empty(Input::get('ureport'))) {
-			$sql = "SELECT count(*) FROM users WHERE report >= :rep";
-			$result = DB::query($sql, [], true, ['rep' => 5])->fetch();
+			$sql = "SELECT count(*) FROM users WHERE report > 0";
+			$result = DB::query($sql)->fetch();
 			echo $result['count(*)'];
 		}
 	}

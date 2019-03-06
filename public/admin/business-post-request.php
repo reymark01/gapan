@@ -119,10 +119,13 @@ $results =  DB::query("SELECT * FROM store_post WHERE b_postverified = 0");
       <small class="text-muted"><?=Validate::formatDate($row['b_postdate'])?></small>
       <br>
       <br>
-      <?=$row['b_title']?><br>
-      <?=$row['b_postprice']?><br>
-      <?=$row['b_post']?><br>
+      Title: <?=$row['b_title']?><br>
+      Price: <?=$row['b_postprice']?><br>
+      Description: <?=$row['b_post']?><br>
 <?php
+      if ($row['b_postqty'] > 0) {
+        echo 'Quantity: '.$row['b_postqty'];
+      }
       if (empty($photos)) {	 
         echo 'No Image<br>';
       } else {

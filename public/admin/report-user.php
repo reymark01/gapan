@@ -11,6 +11,8 @@ if (Input::exist()) {
   } elseif (!empty(Input::get('reset'))) {
     $sql = "UPDATE users SET report = :zero WHERE id = :id";
     DB::query($sql, [], true, ['zero' => 0, 'id' => Input::get('id')]);
+    $sql2 = "DELETE FROM user_report WHERE reported_id = :reportid";
+    DB::query($sql2, [], true, ['reportid' => Input::get('id')]);
   }
 }
 ?>
@@ -25,7 +27,6 @@ if (Input::exist()) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome CSS-->
     <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
     <!-- Fontastic Custom icon font-->
@@ -38,8 +39,10 @@ if (Input::exist()) {
     <link rel="stylesheet" href="vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="/css/style.css">
     <!-- Favicon-->
     <link rel="shortcut icon" href="/image/seal.png">
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
@@ -93,28 +96,49 @@ if (Input::exist()) {
         </nav>
       </header>
       <!-- Counts Section -->
-      <div class="container-fluid">
+      <div class="container p-5">
           <div class="row">
 <?php
-$sql2 = "SELECT * FROM users WHERE report >= :report";
-$results =  DB::query($sql2, [], true, ['report' => 5]);
+$sql2 = "SELECT id, fname, lname, username, profile FROM users WHERE report > 0 ORDER BY report DESC";
+$results =  DB::query($sql2);
 while ($row = $results->fetch()) {
-  echo '     <div class="col-sm-4">
-            <div class="card" style="margin: 15px; ">
-              <div class="card-body">
+  $sql4 = "SELECT count(*) FROM user_report WHERE reported_id = :reportid";
+  $count = DB::query($sql4, [], true, ['reportid' => $row['id']])->fetch();
+  $sql3 = "SELECT profile, username, lname, fname, reporttext FROM user_report, users WHERE user_report.user_id = users.id AND user_report.reported_id = :userid";
+  $qwe = DB::query($sql3, [], true, ['userid' => $row['id']]);
+  echo '<div class="col-sm-4">
+          <div class="card">
+            <div class="card-header">
+            <div><span class="badge badge-pill badge-danger float-left" style="font-size:15px;">'.$count['count(*)'].'</span></div><br>
+              <a href="/user/'.$row['username'].'">
+                  <img class="rounded-circle" src="/user_profiles/'.$row['profile'].'" style="height:75px;width:75px;"><br>
+                  <h4>'.$row['fname'].' '.$row['lname'].'</h4>
+              </a>
+            </div>
+            <div class="card-body">';
+                while ($row2 = $qwe->fetch()) {
+                  echo '<div class="container">
+                         <a href="/user/'.$row2['username'].'"><img class="imgsmall rounded-circle" src="/user_profiles/'.$row2['profile'].'">
+                          '.$row2['fname'].' '.$row2['lname'].'</a>
+                         <div class="row">
+                          <div class="col-sm-2"></div>
+                          <div class="col-sm-10">
+                            <p class="posttext">'.str_replace('  ', ' &nbsp;', nl2br($row2['reporttext'])).'</p>
+                          </div>
+                         </div>
+                         <hr>
+                        </div>';
+                }
+        echo '</div>
+              <div class="card-footer">
                 <form action="" method="post">
-                <a href="#">
-                  <img src="/user_profiles/'.$row['profile'].'" style="height:200px; width:250px;"><br>
-                  Name: '.$row['fname'].' '.$row['lname'].'<br>
-                  Username: '.$row['username'].'<br>
-                  E-mail: '.$row['email'].'<br>
-                  Contact No.: '.$row['contact'].'</a><br>
                   <input type="hidden" name="id" value="'.$row['id'].'">
                   <button type="submit" class="btn btn-danger" name="delete" value="delete">Delete</button>
-                  <button type="submit" class="btn btn-primary" name="reset" value="reset">Reset reports</button>
-                </form></div>
+                  <button type="submit" class="btn btn-primary float-right" name="reset" value="reset">Reset reports</button>
+                </form>
               </div>
-            </div>';
+          </div>
+        </div>';
 }
 ?>
         </div>

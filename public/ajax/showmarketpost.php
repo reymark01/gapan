@@ -40,7 +40,7 @@ if (Input::exist()) {
 		return true;
 		// echo '</div>';
 	} elseif (Input::get('type') == 'user' && Input::get('tab') == 'user') {
-		$sql = "SELECT users.fname, users.lname, users.username, users.profile, user_post.id, user_post.u_title, user_post.u_post, user_post.u_postprice, user_post.u_postdate FROM users, user_post WHERE users.id = user_post.user_id AND user_post.u_postverified = :one AND user_post.u_poststatus != 2 ORDER BY user_post.id DESC LIMIT :start, :lim";
+		$sql = "SELECT users.fname, users.lname, users.username, users.profile, user_post.id, user_post.u_title, user_post.u_post, user_post.u_postprice, user_post.u_postqty, user_post.u_postdate FROM users, user_post WHERE users.id = user_post.user_id AND user_post.u_postverified = :one AND user_post.u_poststatus != 2 ORDER BY user_post.id DESC LIMIT :start, :lim";
 		$result = DB::query($sql, [], true, ['one' => 1, 'start' => Input::get('start'), 'lim' => Input::get('limit')]);
 		// echo '<div class="container">';
 		$users = [];
@@ -66,6 +66,7 @@ if (Input::exist()) {
 					"name"=>$row['fname'].' '.$row['lname'],
 					"postdate"=>Validate::formatDate($row['u_postdate']),
 					"title"=>$row['u_title'],
+					"qty" => $row['u_postqty'],
 					"price"=>$row['u_postprice'],
 					"image"=>$image
 					];

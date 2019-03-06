@@ -13,6 +13,9 @@ if (Input::exist()) {
 				'required' => true,
 				'pregmatch' => 'e'
 			),
+			'qty' => array(
+				'pregmatch' => 'c'
+			),
 			'file' => array(
 				'required' => true,
 				'ftype' => array('jpg', 'jpeg', 'png')
@@ -31,8 +34,8 @@ if (Input::exist()) {
 				if (!empty($_FILES['file']['name'])) {
 					move_uploaded_file($tmp_name, $productsphoto);
 					if (!empty(Input::get('mpcheckbox'))) {
-						$sql2 = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice) VALUES (:id, :title, :post, :postprice)";
-						if (DB::query($sql2, ['title' => htmlspecialchars(Input::get('name')), 'post' => htmlspecialchars(Input::get('post')), 'postprice' => htmlspecialchars(Input::get('price'))], true, ['id' => Session::get('b_sess_id')])) {
+						$sql2 = "INSERT INTO store_post (store_id, b_title, b_post, b_postprice, b_postqty) VALUES (:id, :title, :post, :postprice, :qty)";
+						if (DB::query($sql2, ['title' => htmlspecialchars(Input::get('name')), 'post' => htmlspecialchars(Input::get('post')), 'postprice' => htmlspecialchars(Input::get('price'))], true, ['id' => Session::get('b_sess_id'), 'qty' => Input::get('qty')])) {
 							$sql3 = "SELECT id FROM store_post WHERE store_id = :id ORDER BY id DESC LIMIT 1";
 							$postid = DB::query($sql3, [], true, ['id' => Session::get('b_sess_id')])->fetch();
 							$key2 = Token::uniqKey('store_post_photos', 'b_postphotos');
@@ -578,10 +581,16 @@ if (!empty(Input::get('username'))) {
 									if (!empty($post['postid'])) {
 ?>
 										<h3 class="b-posttitle"><?=$post['b_title']?></h3><br>
+<?php
+									if ($post['b_postqty'] > 0) {
+?>
 										<ul class="template job-dt">
 											<li class="template"><a style="color:black; font-size: 15px;">Quantity</a></li>
 											<li class="template"><span class="b-postqty"><?=$post['b_postqty']?></span></li>
 										</ul>
+<?php
+									}
+?>
 										<ul class="template job-dt">
 											<li class="template"><a style="color:black; font-size: 15px;">Price</a></li>
 											<li class="template">₱<span class="b-postprice"><?=$post['b_postprice']?></span></li>
@@ -660,6 +669,7 @@ if (!empty(Input::get('username'))) {
 										<form id="addOfferForm" class="form-group" action="" method="post" enctype="multipart/form-data">
 										<input class="form-control" type="text" name="name" placeholder="Name"><br>
 										<input class="form-control" type="text" name="price" placeholder="Price"><br>
+										<input id="postqty" class="form-control" type="hidden" name="qty" placeholder="Quantity"><br>
 										<textarea class="form-control" name="post" placeholder="Description"></textarea><br>
 										<input class="form-control" type="file" name="file"><br>
 									    <input type="checkbox" id="exampleCheck1" name="mpcheckbox" value="mpcheckbox">
@@ -1437,6 +1447,13 @@ $(document).ready(function() {
 			$('#wallqty').attr('type', 'hidden');
 		}
 	});
+	$('body').on('change', '#exampleCheck1', function() {
+		if (this.checked) {
+			$('#postqty').attr('type', 'text');
+		} else {
+			$('#postqty').attr('type', 'hidden');
+		}
+	});
 	$('body').on('click', '#store-rate', function(e) {
 		e.preventDefault();
 		$('#ratingsModal').modal('show');
@@ -1465,8 +1482,8 @@ $(document).ready(function() {
 		e.preventDefault();
 		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
 		var editdiv = $(this);
-		editdiv.hide();
 		var postID = e.target.attributes[1].value;
+		editdiv.hide();
 		var postpriceID = "price-"+postID;
 		var postqtyID = "qty-"+postID;
 		var postTextID  = "text-"+postID;
@@ -1488,12 +1505,12 @@ $(document).ready(function() {
 		bpostqty.replaceWith('<input class="edit-post-qty form-control" id="'+postqtyID+'"" form="edit-form" type="text" value="'+bpostqtyval+'">');
 		bpostprice.replaceWith('<input class="edit-post-price form-control" id="'+postpriceID+'"" form="edit-form" type="text" value="'+bpostpriceval+'">');
 		bpost.replaceWith('<textarea form="edit-form" id="'+postTextID+'"class="edit-post-text form-control">'+bposttext+'</textarea>');
-		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="submit" name="save" value="edit-save">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="submit" value="edit-cancel">Cancel</button></form>');
+		div.find('.edit-buttons').append('<button form="edit-form" id="'+editBtnID+'" class="btn btn-primary float-right edit-post-save" type="button">Save</button><button form="edit-form" id="'+cancelBtnID+'" class="btn btn-danger float-right edit-post-cancel" type="button">Cancel</button></form>');
 		var editsave = div.find('.edit-post-save');
 		var editcancel = div.find('.edit-post-cancel');
 
-		$('body').on('click', '#'+editBtnID, function(e) {
-			e.preventDefault();
+		$('body').on('click', '#'+editBtnID, function(ee) {
+			ee.preventDefault();
 			var editprice = $("#"+postpriceID).val();
 			var editqty = $("#"+postqtyID).val();
 			var edittext = $("#"+postTextID).val();
@@ -1529,8 +1546,8 @@ $(document).ready(function() {
 				}
 			});
 		})
-		$('body').on('click', '#'+cancelBtnID, function(e){
-			e.preventDefault();
+		$('body').on('click', '#'+cancelBtnID, function(ec){
+			ec.preventDefault();
 			$("#"+postpriceID).replaceWith('<span class="b-postprice">'+bpostpriceval+'</span>');
 			$("#"+postqtyID).replaceWith('<span class="b-postqty">'+bpostqtyval+'</span>');
 			$("#"+postTextID).replaceWith('<p class="b-post">'+bposttext+'</p>');
@@ -1543,8 +1560,8 @@ $(document).ready(function() {
 		e.preventDefault();
 		$(this).parent().parent().parent().find('.ed-options').removeClass('active');
 		var editdiv = $(this);
-		editdiv.hide();
 		var postID = e.target.attributes[1].value;
+		editdiv.hide();
 		var postTextID  = "text-"+postID;
 		var editBtnID = "edit-"+postID;
 		var cancelBtnID = "cancel-"+postID;
