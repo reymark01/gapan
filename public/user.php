@@ -201,7 +201,18 @@ function renderReportModal($resultid, $fname, $lname){
 	      <form id="reportUserForm">
 	      <div class="modal-body">
 	      	Are you sure you want to report <span style="font-weight: bold"><?=$fname.' '.$lname?></span>?<br><br>
-	      	<textarea id="reporttext" class="form-control" placeholder="Your Report"></textarea>
+	      	<textarea id="reporttext" class="form-control" placeholder="Your Report" contenteditable="true"></textarea>
+	      	<div class="container p-3">
+	      		<div class="row">
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Inaccurate description"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Inaccurate description</span></div></a></div>
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Harassment"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Harassment</span></div></a></div>
+	      		</div>
+	      		<div class="row">
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Fraud/Scam"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Fraud/Scam</span></div></a></div>
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Didn't receive item"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Didn't receive item</span></div></a></div>
+
+	      		</div>
+	      	</div>
 	      </div>
 	      <div class="modal-footer">
 	      		<input type="hidden" id="ureportid" value="<?=$resultid?>">
@@ -737,6 +748,11 @@ $(document).ready(function() {
 	$('body').on('click', '#user-report', function(e) {
 		e.preventDefault();
 		$('#reportUserModal').modal('show');
+	});
+	$('body').on('click', '.reportoptions', function(e) {
+		e.preventDefault();
+		var q = $(this).attr('value');
+		$('#reporttext').val(q);
 	});
 	$('body').on('submit', '#reportUserForm', function(e) {
 		e.preventDefault();

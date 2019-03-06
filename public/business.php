@@ -391,6 +391,17 @@ function renderReportModal($resultid, $bname){
 	      	<div class="container p-2">
 	      		Are you sure you want to report <span style="font-weight: bold"><?=$bname?></span>?<br><br>
 	      		<textarea id="reporttext" class="form-control" placeholder="Your Report"></textarea>
+	      		<div class="container p-3">
+	      		<div class="row">
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Inaccurate description"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Inaccurate description</span></div></a></div>
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Harassment"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Harassment</span></div></a></div>
+	      		</div>
+	      		<div class="row">
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Fraud/Scam"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Fraud/Scam</span></div></a></div>
+	      			<div class="col-sm-6 p-2"><a class="reportoptions" href="#" style="color:black;" value="Didn't receive item"><div class="p-2 rounded" style="background-color: #ecebf0"><span style="font-size: 15px;">Didn't receive item</span></div></a></div>
+
+	      		</div>
+	      	</div>
 	      	</div>
 	      </div>
 	      <div class="modal-footer">
@@ -1473,6 +1484,11 @@ $(document).ready(function() {
 	$('body').on('click', '#store-report', function(e) {
 		e.preventDefault();
 		$('#reportBusinessModal').modal('show');
+	});
+	$('body').on('click', '.reportoptions', function(e) {
+		e.preventDefault();
+		var q = $(this).attr('value');
+		$('#reporttext').val(q);
 	});
 	$('body').on('click', '#store-addoffer', function(e) {
 		e.preventDefault();
